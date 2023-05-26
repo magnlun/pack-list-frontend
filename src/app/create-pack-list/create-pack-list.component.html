@@ -1,0 +1,24 @@
+
+<div>
+  <div>
+    <app-text-input [label]="'Namn'" [model]="name" (model)="nameUpdate($event)" [validationError]="emptyNameError ? 'Du måste ange ett namn på listan' : undefined"></app-text-input>
+  </div>
+  <div>
+    <h1>Personer</h1>
+    <app-multi-select-group [buttons]="persons" (selectedButtons)="selectedPersons = $event" [selectedButtons]="selectedPersons"></app-multi-select-group>
+  </div>
+  <div>
+    <h1>Destinationer</h1>
+    <app-multi-select-group [buttons]="destinations" (selectedButtons)="selectedDestinations = $event" [selectedButtons]="selectedDestinations"></app-multi-select-group>
+  </div>
+  <div>
+    <h1>Aktiviteter</h1>
+    <app-multi-select-group [buttons]="activities" (selectedButtons)="selectedActivities = $event" [selectedButtons]="selectedActivities"></app-multi-select-group>
+  </div>
+  <div>
+    <h1>Längd</h1>
+    <app-radio-button-group [buttons]="durations" (selectedButton)="selectDuration($event)" [selectedButton]="selectedDuration" />
+    <app-error-message>{{durationErrorMessage}}</app-error-message>
+  </div>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="this.emptyNameError">Skapa lista</button>
+</div>

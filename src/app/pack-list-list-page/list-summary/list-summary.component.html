@@ -1,0 +1,15 @@
+<a [routerLink]="'/list/' + list.id">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{list.name}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="boxes">
+        <app-checkbox [label]="item.item.name" *ngFor="let item of items" [disabled]="true" [checked]="item.checked"></app-checkbox>
+      </div>
+    </mat-card-content>
+    <mat-card-footer *ngIf="list.items.length > MAX_ITEMS - 1">
+      <div class="gradient"></div>
+    </mat-card-footer>
+  </mat-card>
+</a>

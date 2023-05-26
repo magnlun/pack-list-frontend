@@ -1,0 +1,56 @@
+<div *ngIf="packList" class="container" [class.mobile]="isSmallScreen">
+  <div class="header">
+    <h2 class="fs-2 name" (click)="startEdit()" [class.d-none]="editTeamName">{{packList.name}}</h2>
+    <app-text-input [label]="'Namn'" [model]="packList.name" (model)="packList.name = $event"
+                    (focusLost)="saveName()" (enterPressed)="saveName()"
+                    [class.d-none]="!editTeamName" [focus]="editTeamName"></app-text-input>
+    <div class="buttons">
+      <button mat-icon-button matTooltip="Kopiera listan" (click)="cloneList()">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Ta bort listan" (click)="deleteList()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Dela listan" (click)="shareList()">
+        <mat-icon>share</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="content">
+    <app-item-category *ngFor="let category of categoryList" [name]="category" [items]="categorizedItems.get(category) || []" (deleteEvent)="deleteItem($event)" (updateEvent)="updatePacklist($event)">
+    </app-item-category>
+    <div class="new-item">
+      <app-checkbox [disabled]="true"></app-checkbox>
+
+      <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Ny sak att packa</mat-label>
+          <input type="text"
+                 placeholder="Sök"
+                 aria-label="Ny sak att packa"
+                 matInput
+                 [formControl]="myControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addItem($event.option.value)">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+
+    </div>
+    <mat-expansion-panel [disabled]="!packedItems.length" [expanded]="!!packedItems.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Packat
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-item-category [items]="packedItems" (updateEvent)="updatePacklist($event)" (deleteEvent)="deleteItem($event)" *ngIf="packedItems.length">
+      </app-item-category>
+    </mat-expansion-panel>
+  </div>
+</div>
+

@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+  <span>Packlistor</span>
+  <span class="example-spacer"></span>
+  <ng-container *ngIf="loggedIn">
+    <a [routerLink]="''" mat-icon-button aria-label="Dina listor" matTooltip="Dina listor">
+      <mat-icon>list</mat-icon>
+    </a>
+    <a [routerLink]="'createList'" mat-icon-button aria-label="Skapa packlista" matTooltip="Skapa packlista">
+      <mat-icon>edit_note</mat-icon>
+    </a>
+    <a [routerLink]="'templateItem'" mat-icon-button aria-label="Ändra mallar" matTooltip="Ändra mallar">
+      <mat-icon>edit</mat-icon>
+    </a>
+    <a [routerLink]="'template'" mat-icon-button aria-label="Skapa sak" matTooltip="Skapa sak">
+      <mat-icon>person_add</mat-icon>
+    </a>
+    <a mat-icon-button aria-label="Logga ut" (click)="logout()" matTooltip="Logga ut">
+      <mat-icon>lock</mat-icon>
+    </a>
+  </ng-container>
+</mat-toolbar>

@@ -1,0 +1,15 @@
+<h3 class="fs-6" [class.disabled]="!items.length" *ngIf="name !== undefined">{{name || 'Övrigt'}}</h3>
+<div *ngFor="let item of items" class="checkbox-container">
+  <ng-container *ngIf="isSmallScreen">
+    <app-swipeable (deleted)="deleteItem(item)">
+      <app-checkbox [label]="item.item.name" [checked]="item.checked" [strikeWhenComplete]="true" (checkEvent)="checkClicked(item, $event.valueOf())" />
+    </app-swipeable>
+  </ng-container>
+  <ng-container *ngIf="!isSmallScreen">
+    <app-checkbox [label]="item.item.name" [checked]="item.checked" [strikeWhenComplete]="true" (checkEvent)="checkClicked(item, $event.valueOf())" />
+    <button mat-icon-button class="delete-button" (click)="deleteItem(item)" [attr.aria-label]="'Delete ' + item.item.name">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </ng-container>
+</div>
+

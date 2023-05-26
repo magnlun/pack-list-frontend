@@ -1,0 +1,17 @@
+.templates {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-bottom: 1em;
+
+  div {
+    flex-basis: 34%;
+    flex-grow: 1;
+  }
+}
+
+.itemSelector {
+  max-height: 16em;
+  overflow: auto;
+}

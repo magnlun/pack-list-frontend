@@ -1,0 +1,23 @@
+@use "../variables";
+
+.lists {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  .list-box {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: variables.$medium-top) {
+    .list-box {
+      flex-basis: 49%;
+    }
+  }
+  @media (min-width: variables.$large-bottom) {
+    .list-box {
+      flex-basis: 32%;
+    }
+  }
+}

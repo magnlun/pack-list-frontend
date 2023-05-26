@@ -1,0 +1,44 @@
+.mobile {
+  width: 100%;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+    }
+
+    .name:hover {
+      cursor: pointer;
+      color: blue;
+    }
+
+    .buttons {
+      display: flex;
+
+      button {
+        margin-left: 1em;
+      }
+    }
+  }
+  .new-item {
+    display: flex;
+
+    .new-item-input {
+      outline: none;
+      border: 0;
+      border-bottom: 1px black solid;
+    }
+  }
+}
+
+.d-none {
+  display: none;
+}

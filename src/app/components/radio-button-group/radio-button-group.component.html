@@ -1,0 +1,3 @@
+<mat-chip-listbox aria-label="Duration selection" [ngModel]="selectedButton" (ngModelChange)="setSelectedButton($event)">
+  <mat-chip-option *ngFor="let button of buttons" [value]="button">{{button.label}}</mat-chip-option>
+</mat-chip-listbox>

@@ -1,0 +1,62 @@
+<div class="templates">
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <mat-selection-list [ngModel]="selectedPersons" (ngModelChange)="selectedPersons = $event">
+          <mat-list-option *ngFor="let item of persons" [value]="item">
+            {{item.name}}
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <mat-selection-list [ngModel]="selectedActivities" (ngModelChange)="selectedActivities = $event">
+          <mat-list-option *ngFor="let item of activities" [value]="item">
+            {{item.name}}
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <mat-selection-list [ngModel]="selectedDurations" (ngModelChange)="selectedDurations = $event">
+          <mat-list-option *ngFor="let item of durations" [value]="item">
+            {{item.name}}
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <mat-selection-list [ngModel]="selectedDestinations" (ngModelChange)="selectedDestinations = $event">
+          <mat-list-option *ngFor="let item of destinations" [value]="item">
+            {{item.name}}
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <app-filterable-item-list [selectedItems]="selectedItems" (updateSelectStatus)="updateSelectedItems($event[0], $event[1])"></app-filterable-item-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content>
+        Om {{personDescription}} åker på en resa {{destinationDescription}} {{durationDescription}} för att hålla på med {{activityDescription}} ska {{itemDescription}} packas
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<button mat-raised-button color="primary" (click)="submit()">Skapa</button>

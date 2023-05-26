@@ -1,0 +1,9 @@
+<mat-form-field class="example-full-width">
+  <mat-label>{{label}}</mat-label>
+  <input matInput [placeholder]="label" [type]="type" [ngModel]="model"
+         (ngModelChange)="textChange($event)" (keydown.enter)="triggerSubmit()"
+         (focusout)="this.focusLost.emit()" #inputElement [errorStateMatcher]="matcher">
+  <mat-error>
+    {{validationError}}
+  </mat-error>
+</mat-form-field>

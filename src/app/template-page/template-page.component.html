@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Ny person
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-text-input [label]="'Namn'" (enterPressed)="createPerson($event)" [model]="personName"></app-text-input>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Ny destination
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-text-input [label]="'Plats'" (enterPressed)="createDestination($event)"></app-text-input>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Ny längd
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-text-input [label]="'Tid'" (enterPressed)="createDuration($event)"></app-text-input>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Ny aktivitet
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-text-input [label]="'Namn'" (enterPressed)="createActivity($event)"></app-text-input>
+  </mat-card-content>
+</mat-card>

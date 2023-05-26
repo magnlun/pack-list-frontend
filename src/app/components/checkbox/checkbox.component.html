@@ -1,0 +1,6 @@
+<mat-checkbox class="example-margin"
+              [checked]="checked"
+              (change)="checked = ($event.checked)"
+              [disabled]="disabled">
+  <span [class.text-decoration-line-through]="checked && strikeWhenComplete">{{label}}</span>
+</mat-checkbox>

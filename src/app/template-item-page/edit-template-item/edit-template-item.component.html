@@ -1,0 +1,12 @@
+<mat-card>
+  <mat-card-content>
+    <mat-action-list>
+      <button mat-list-item *ngFor="let key of templateKeys" (click)="selectTemplateGroup(key)">{{key.description}}</button>
+    </mat-action-list>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <app-filterable-item-list [selectedItems]="selectedTemplateGroup ? selectedTemplateGroup.items : []" (updateSelectStatus)="updateCheckStatus($event[1], $event[0])"></app-filterable-item-list>
+  </mat-card-content>
+</mat-card>

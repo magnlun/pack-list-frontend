@@ -1,0 +1,9 @@
+<div [class.notDragging]="!currentlyDragged" [class.pendingDelete]="pendingDelete">
+  <div class="button" #button>
+    <div class="iconContainer">
+      <mat-icon>delete</mat-icon>
+    </div>
+  </div>
+  <div #draggableElement class="text"><ng-content></ng-content></div>
+</div>
+

@@ -1,0 +1,31 @@
+
+.disabled {
+  color: silver;
+}
+
+.delete-button {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  app-swipeable {
+    flex-grow: 1;
+  }
+
+  app-checkbox {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.checkbox-container:hover {
+  .delete-button {
+    visibility: visible;
+    pointer-events: all;
+  }
+}
