@@ -4,6 +4,6 @@
       <mat-icon>delete</mat-icon>
     </div>
   </div>
-  <div #draggableElement class="text" (touchstart)="touchStart($event)" (touchend)="touchEnd($event)" (touchcancel)="this.currentlyDragged = false" (touchmove)="move($event)"><ng-content></ng-content></div>
+  <div #draggableElement class="text" (touchstart)="touchStart($event)" (touchend)="touchEnd()" (touchcancel)="this.currentlyDragged = false" (touchmove)="move($event)"><ng-content></ng-content></div>
 </div>
 
