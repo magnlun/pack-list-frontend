@@ -60,6 +60,10 @@ export class AuthenticationService {
     return {success: false, errorMessage: error.detail}
   }
 
+  private static createRegisterResultFromFailure(error: LoginError): LoginResult {
+    return {success: false, errorMessage: error.detail}
+  }
+
   logout() {
     this.loginToken = undefined;
     this.loggedIn$.next(false);
@@ -87,6 +91,14 @@ export class AuthenticationService {
     )
   }
 
+  registerUser(email: string, password: string): Observable<LoginResult> {
+    return this.http.post<LoginToken>('/rest/users/', {username: email, email, password}).pipe(
+      tap((data) => this.loginSuccessful(data)),
+      map(() => {return {success: true}}),
+      catchError((message) => of(AuthenticationService.createRegisterResultFromFailure(message.error)))
+    )
+  }
+
   get loginToken(): LoginToken | undefined {
     return this._loginToken;
   }
@@ -101,6 +113,14 @@ export class AuthenticationService {
       localStorage.removeItem(this.JWT_COOKIE_NAME);
       this.$jwtToken.next(undefined);
     }
+  }
+
+  requstPasswordReset(email: string) {
+    return this.http.post('rest/api/password_reset/', {email});
+  }
+
+  setPassword(token: string, password: string) {
+    return this.http.post('rest/api/password_reset/confirm/', {token, password});
   }
 }
 

@@ -1,0 +1,4 @@
+<app-text-input [label]="'Epostadress'" [model]="email" (model)="email = $event"></app-text-input>
+<app-text-input [label]="'Lösenord'" [model]="password" (model)="password = $event" [type]="'password'"></app-text-input>
+<app-text-input [label]="'Bekräfta lösenord'" [model]="confirmPassword" (model)="confirmPassword = $event" [type]="'password'"></app-text-input>
+<button mat-raised-button color="primary" (click)="register()">Registrera</button>

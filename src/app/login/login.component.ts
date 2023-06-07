@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private hasEmittedLoggedin = false;
 
-  constructor(private service: AuthenticationService) { }
+  constructor(private service: AuthenticationService, private router: Router) { }
 
   ngOnInit() {
     this.subscriptions.add(
@@ -50,5 +50,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  navigateToRegister() {
+    this.router.navigate(['/register']);
+  }
+
+  navigateToForgotPassword() {
+    this.router.navigate(['/forgotPassword']);
   }
 }

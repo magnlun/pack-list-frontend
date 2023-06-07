@@ -18,6 +18,9 @@ import { MenuModule } from "./menu/menu.module";
 import { TemplateItemPageModule } from "./template-item-page/template-item-page.module";
 import { TemplatePageModule } from "./template-page/template-page.module";
 import { SharePackListPageModule } from "./share-pack-list-page/share-pack-list-page.module";
+import { RegisterPageModule } from "./register-page/register-page.module";
+import { ForgotPasswordPageModule } from "./forgot-password-page/forgot-password-page.module";
+import { ResetPasswordPageModule } from "./reset-password-page/reset-password-page.module";
 
 @NgModule({
   declarations: [
@@ -38,7 +41,10 @@ import { SharePackListPageModule } from "./share-pack-list-page/share-pack-list-
     MenuModule,
     TemplateItemPageModule,
     TemplatePageModule,
-    SharePackListPageModule
+    SharePackListPageModule,
+    RegisterPageModule,
+    ForgotPasswordPageModule,
+    ResetPasswordPageModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

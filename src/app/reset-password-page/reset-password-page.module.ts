@@ -1,24 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from './login.component';
+import { ResetPasswordPageComponent } from './reset-password-page.component';
 import { ComponentsModule } from "../components/components.module";
 import { MatButtonModule } from "@angular/material/button";
-import { RouterModule } from "@angular/router";
 
 
 
 @NgModule({
   declarations: [
-    LoginComponent
-  ],
-  exports: [
-    LoginComponent
+    ResetPasswordPageComponent
   ],
   imports: [
     CommonModule,
     ComponentsModule,
-    MatButtonModule,
-    RouterModule
+    MatButtonModule
   ]
 })
-export class LoginModule { }
+export class ResetPasswordPageModule { }

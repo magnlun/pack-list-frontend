@@ -3,5 +3,9 @@
 <form action="javascript:void(0);">
   <app-text-input [label]="'Användarnamn'" [model]="username" (model)="username = $event"></app-text-input>
   <app-text-input [label]="'Lösenord'" [model]="password" (model)="password = $event" (enterPressed)="signIn()" [type]="'password'"></app-text-input>
+  <div class="buttons">
+    <button mat-button color="primary" (click)="navigateToRegister()">Registrera</button>
+    <button mat-button color="primary" (click)="navigateToForgotPassword()">Glömt lösenord</button>
+  </div>
   <button mat-raised-button color="primary" (click)="signIn()">Logga in</button>
 </form>
