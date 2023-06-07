@@ -1,1 +1,2 @@
+/rest/* https://packlist.eu.pythonanywhere.com/rest/:splat  200
 /* /index.html 200
