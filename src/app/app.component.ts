@@ -3,6 +3,7 @@ import { PackListService } from "./pack-list.service";
 import { interval, Subscription } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
 import { LayoutService } from "./layout.service";
+import { distinctUntilChanged } from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -41,7 +42,9 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe((jwtToken) => this.authService.loggedIn$.next(!!jwtToken))
     );
     this.subscriptions.add(
-      this.authService.loggedIn$.subscribe((loggedIn) => {
+      this.authService.loggedIn$.pipe(
+        distinctUntilChanged()
+      ).subscribe((loggedIn) => {
         this.loggedIn = loggedIn;
         if(loggedIn) {
           this.subscriptions.add(this.service.getPackLists().subscribe());
