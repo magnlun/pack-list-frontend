@@ -3,7 +3,6 @@ import { Observable, of, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import { AuthInterceptor } from "./auth-interceptor";
 
 @Injectable({
   providedIn: 'root'
