@@ -69,6 +69,24 @@ export class PackListService {
     );
   }
 
+  createItem(name: string): Observable<Item> {
+    let newItem = this.http.post<Item>('/rest/items/', {name});
+    return combineLatest([newItem, this.$items]).pipe(
+      first(),
+      map(([item, existingItems]) => {
+        let items = existingItems.concat([item]);
+        this.$items.next(items);
+        this.$itemsById.next(
+          items.reduce((map, item) => {
+            map.set(item.id, item);
+            return map;
+          }, new Map<number, Item>())
+        )
+        return item
+      })
+    )
+  }
+
   getItems(): Observable<Item[]> {
     return this.http.get<Item[]>('/rest/items/').pipe(
       tap((items) => {

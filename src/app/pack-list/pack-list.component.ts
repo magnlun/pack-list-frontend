@@ -190,6 +190,23 @@ export class PackListComponent implements OnInit, OnDestroy {
       this.service.updatePackList(this.packList!).subscribe()
     );
   }
+
+  selectOrCreateItem() {
+    let itemName = this.myControl.value;
+    if(itemName) {
+      let item = this.items.find((item) => item.name === itemName);
+      if(item) {
+        this.addItem(item);
+      }
+      else {
+        this.subscriptions.add(
+          this.service.createItem(itemName).subscribe((item) => {
+            this.addItem(item)
+          })
+        );
+      }
+    }
+  }
 }
 
 interface CategoryItems {
