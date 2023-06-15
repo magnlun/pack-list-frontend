@@ -14,7 +14,7 @@ import { LayoutService } from "../layout.service";
   styleUrls: ['./pack-list.component.scss']
 })
 export class PackListComponent implements OnInit, OnDestroy {
-  packList: PackList | undefined;
+  _packList: PackList | undefined;
 
   categoryList: (string | null)[] = [];
   packedItems: PackItem[] = [];
@@ -46,7 +46,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       ).subscribe((list) => {
         if(list) {
           this.categoryList = [...new Set(list.items.map((item) => item.category))]
-          this.handlePacklist(list);
+          this.packList = list;
         }
       })
     );
@@ -87,34 +87,29 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   sortPacklist() {
     if(this.packList) {
-      this.handlePacklist(this.packList);
+      this.packList.items.sort((a, b) => a.item.name.localeCompare(b.item.name));
+      const unpackedItems = this.packList.items.filter((item) => !item.checked)
+      this.packedItems = this.packList.items.filter((item) => item.checked)
+      this.categorizedItems = unpackedItems.reduce((map, item) => {
+        let items = map.get(item.category);
+        if(items) {
+          items.push(item)
+        }
+        else {
+          map.set(item.category, [item])
+        }
+        return map;
+      }, new Map<string | null, PackItem[]>());
+      this.categoryList = [...new Set(this.packList.items.map((item) => item.category))].sort((a, b) => {
+        if(a === null) {
+          return -1;
+        }
+        if(b === null) {
+          return 1;
+        }
+        return a.localeCompare(b);
+      });
     }
-  }
-
-  private handlePacklist(packList: PackList) {
-    packList.items.sort((a, b) => a.item.name.localeCompare(b.item.name));
-    this.packList = packList;
-    const unpackedItems = packList.items.filter((item) => !item.checked)
-    this.packedItems = packList.items.filter((item) => item.checked)
-    this.categorizedItems = unpackedItems.reduce((map, item) => {
-      let items = map.get(item.category);
-      if(items) {
-        items.push(item)
-      }
-      else {
-        map.set(item.category, [item])
-      }
-      return map;
-    }, new Map<string | null, PackItem[]>());
-    this.categoryList = [...new Set(packList.items.map((item) => item.category))].sort((a, b) => {
-      if(a === null) {
-        return -1;
-      }
-      if(b === null) {
-        return 1;
-      }
-      return a.localeCompare(b);
-    });
   }
 
   updatePacklist(item: PackItem) {
@@ -151,13 +146,21 @@ export class PackListComponent implements OnInit, OnDestroy {
     this.editTeamName = true;
   }
 
+  get packList(): PackList | undefined {
+    return this._packList;
+  }
+
+  set packList(packList: PackList | undefined) {
+    this._packList = packList;
+    this.sortPacklist();
+  }
+
   addItem(item: Item) {
     if(this.packList) {
       this.subscriptions.add(
         this.service.addItemToList(this.packList, item).subscribe((packList) => {
           this.myControl.setValue('');
           this.packList = packList;
-          this.sortPacklist();
         })
       );
     }
@@ -207,9 +210,4 @@ export class PackListComponent implements OnInit, OnDestroy {
       }
     }
   }
-}
-
-interface CategoryItems {
-  name: string | null;
-  items: PackItem[];
 }
