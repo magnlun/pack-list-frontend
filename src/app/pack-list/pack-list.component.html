@@ -31,7 +31,7 @@
                  matInput
                  [formControl]="myControl"
                  [matAutocomplete]="auto"
-          (keyup.enter)="selectOrCreateItem()">
+          (keydown.enter)="selectOrCreateItem()">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addItem($event.option.value)">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
               {{option.name}}
