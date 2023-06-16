@@ -18,18 +18,29 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {}
 
+  private getCookie(name: string) {
+    return document.cookie.split(';').map(val => val.trim()).find(c => {
+      return c.startsWith(name + '=');
+    })
+      ?.substring(name.length + 1);
+  }
+
+  private delete_cookie( name: string ) {
+    if( this.getCookie( name ) ) {
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    }
+  }
+
   checkLoginStatus(): Observable<unknown> {
-    const stringToken = localStorage.getItem(this.JWT_COOKIE_NAME);
+    const stringToken = this.getCookie(this.JWT_COOKIE_NAME);
     if(!stringToken) {
       this.loginToken = undefined;
     }
     else {
       try {
-        const jwtToken = JSON.parse(stringToken) as LoginToken;
-        const refreshToken = jwtToken.refresh;
-        const token = jwt_decode<JwtPayload>(refreshToken);
+        const token = jwt_decode<JwtPayload>(stringToken);
         if(token.exp && token.exp > new Date().getTime() / 1000) {
-          return this.refreshToken(refreshToken)
+          return this.refreshToken(stringToken)
         }
         else {
           this.logout();
@@ -105,11 +116,9 @@ export class AuthenticationService {
   set loginToken(token: LoginToken | undefined) {
     this._loginToken = token;
     if(token) {
-      localStorage.setItem(this.JWT_COOKIE_NAME, JSON.stringify(token));
       this.$jwtToken.next(token);
     }
     else {
-      localStorage.removeItem(this.JWT_COOKIE_NAME);
       this.$jwtToken.next(undefined);
     }
   }
@@ -120,6 +129,17 @@ export class AuthenticationService {
 
   setPassword(token: string, password: string) {
     return this.http.post('rest/api/password_reset/confirm/', {token, password});
+  }
+
+  saveToken(jwtToken: LoginToken): Observable<any> {
+    const token = jwt_decode<JwtPayload>(jwtToken.refresh);
+    var d = new Date(0);
+    d.setUTCSeconds(token.exp!)
+    return this.http.post('rest/api/set-cookie/', {name: this.JWT_COOKIE_NAME, value: jwtToken.refresh, expiration: d.toISOString()});
+  }
+
+  deleteToken() {
+    this.delete_cookie(this.JWT_COOKIE_NAME);
   }
 }
 

@@ -39,7 +39,17 @@ export class AppComponent implements OnInit, OnDestroy {
     )
     this.subscriptions.add(
       this.authService.$jwtToken
-        .subscribe((jwtToken) => this.authService.loggedIn$.next(!!jwtToken))
+        .subscribe((jwtToken) => {
+          if(jwtToken) {
+            this.subscriptions.add(
+              this.authService.saveToken(jwtToken).subscribe()
+            );
+          }
+          else {
+            this.authService.deleteToken();
+          }
+          this.authService.loggedIn$.next(!!jwtToken)
+        })
     );
     this.subscriptions.add(
       this.authService.loggedIn$.pipe(
