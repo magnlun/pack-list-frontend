@@ -18,7 +18,7 @@ export class ForgotPasswordPageComponent implements OnDestroy {
 
   reset() {
     this.subscriptions.add(
-      this.service.requstPasswordReset(this.email).subscribe(() => this.requested = true)
+      this.service.requestPasswordReset(this.email).subscribe(() => this.requested = true)
     );
   }
 

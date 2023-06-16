@@ -32,7 +32,10 @@ export class AuthenticationService {
   }
 
   checkLoginStatus(): Observable<unknown> {
-    const stringToken = this.getCookie(this.JWT_COOKIE_NAME);
+    let stringToken = this.getCookie(this.JWT_COOKIE_NAME);
+    if(!stringToken) {
+      stringToken = localStorage.getItem(this.JWT_COOKIE_NAME) || undefined;
+    }
     if(!stringToken) {
       this.loginToken = undefined;
     }
@@ -123,7 +126,7 @@ export class AuthenticationService {
     }
   }
 
-  requstPasswordReset(email: string) {
+  requestPasswordReset(email: string) {
     return this.http.post('rest/api/password_reset/', {email});
   }
 
@@ -132,6 +135,7 @@ export class AuthenticationService {
   }
 
   saveToken(jwtToken: LoginToken): Observable<any> {
+    localStorage.setItem(this.JWT_COOKIE_NAME, jwtToken.refresh);
     const token = jwt_decode<JwtPayload>(jwtToken.refresh);
     var d = new Date(0);
     d.setUTCSeconds(token.exp!)
@@ -140,6 +144,7 @@ export class AuthenticationService {
 
   deleteToken() {
     this.delete_cookie(this.JWT_COOKIE_NAME);
+    localStorage.removeItem(this.JWT_COOKIE_NAME);
   }
 }
 
