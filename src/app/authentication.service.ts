@@ -137,7 +137,7 @@ export class AuthenticationService {
   saveToken(jwtToken: LoginToken): Observable<any> {
     localStorage.setItem(this.JWT_COOKIE_NAME, jwtToken.refresh);
     const token = jwt_decode<JwtPayload>(jwtToken.refresh);
-    var d = new Date(0);
+    const d = new Date(0);
     d.setUTCSeconds(token.exp!)
     return this.http.post('rest/api/set-cookie/', {name: this.JWT_COOKIE_NAME, value: jwtToken.refresh, expiration: d.toISOString()});
   }
