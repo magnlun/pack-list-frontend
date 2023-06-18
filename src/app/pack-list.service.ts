@@ -17,6 +17,7 @@ export class PackListService {
 
   getPackList(id: number): Observable<PackList | undefined> {
     return this.$packLists.pipe(
+      first(),
       map((items) => items.find((item) => item.id === id)),
       mergeMap((list) => {
         if(list) {
@@ -126,8 +127,8 @@ export class PackListService {
   addItemToList(packList: PackList, item: Item): Observable<PackList> {
     let $response = this.http.post<PackItemResponse>('/rest/pack-items/', {
       item: item.id,
-        checked: false,
-        list_id: packList.id
+      checked: false,
+      list_id: packList.id
     });
     return combineLatest([$response, this.$itemsById, this.$packLists]).pipe(
       first(),
