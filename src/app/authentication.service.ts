@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, retryWhen, tap } from 'rxjs/operators';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
+import { genericRetryStrategy } from "./util";
+import { ErrorHandlingService } from "./error-handling.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class AuthenticationService {
 
   _loginToken: LoginToken | undefined;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private errorHandling: ErrorHandlingService) {}
 
   private getCookie(name: string) {
     return document.cookie.split(';').map(val => val.trim()).find(c => {
@@ -94,6 +96,10 @@ export class AuthenticationService {
       throw new Error("Tried to refresh without being signed in and no token provided")
     }
     return this.http.post<{access: string}>('/rest/api/token/refresh/', {"refresh": token}).pipe(
+      retryWhen(genericRetryStrategy({
+        excludedStatusCodes: (status) => status > 400 && status < 500
+      })),
+      tap(() => {}, () => this.errorHandling.$hasMajorError.next(true)),
       map((accessToken) => {
         return {
           access: accessToken.access,

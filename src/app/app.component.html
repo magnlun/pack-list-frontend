@@ -3,6 +3,13 @@
 
 <main class="flex-shrink-0">
   <div class="container">
-    <router-outlet class="m-2"></router-outlet>
+    <app-error-page *ngIf="hasError; else content"></app-error-page>
   </div>
 </main>
+
+<ng-template #content>
+  <router-outlet class="m-2" *ngIf="loaded else loading"></router-outlet>
+</ng-template>
+<ng-template #loading>
+  <app-loading-page></app-loading-page>
+</ng-template>

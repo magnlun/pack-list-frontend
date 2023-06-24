@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { PackItem } from "../../models";
-import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
-import { takeUntil } from "rxjs/operators";
-import { Subject, Subscription } from "rxjs";
+import { Breakpoints } from "@angular/cdk/layout";
+import { Subscription } from "rxjs";
 import { LayoutService } from "../../layout.service";
 
 @Component({
@@ -26,8 +25,7 @@ export class ItemCategoryComponent implements OnInit, OnDestroy {
 
   subscriptions = new Subscription();
 
-  constructor(private layoutService: LayoutService) {
-  }
+  constructor(private layoutService: LayoutService) {}
 
   checkClicked(item: PackItem, checked: boolean) {
     item.checked = checked;

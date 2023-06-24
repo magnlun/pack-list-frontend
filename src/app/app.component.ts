@@ -4,6 +4,7 @@ import { interval, Subscription } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
 import { LayoutService } from "./layout.service";
 import { distinctUntilChanged } from "rxjs/operators";
+import { ErrorHandlingService } from "./error-handling.service";
 
 @Component({
   selector: 'app-root',
@@ -17,8 +18,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
   loggedIn = false;
-  constructor(private service: PackListService, private authService: AuthenticationService, private layoutService: LayoutService) {}
+  loaded = false;
+  hasError = false;
+  constructor(private service: PackListService, private authService: AuthenticationService, private layoutService: LayoutService, private errorService: ErrorHandlingService) {}
   ngOnInit(): void {
+    this.subscriptions.add(
+      this.errorService.$hasMajorError.subscribe((error) => this.hasError = true)
+    )
     this.subscriptions.add(
       this.service.getItems().subscribe()
     );
@@ -55,6 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.authService.loggedIn$.pipe(
         distinctUntilChanged()
       ).subscribe((loggedIn) => {
+        this.loaded = true;
         this.loggedIn = loggedIn;
         if(loggedIn) {
           this.subscriptions.add(this.service.getPackLists().subscribe());

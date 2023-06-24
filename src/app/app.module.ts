@@ -22,6 +22,8 @@ import { RegisterPageModule } from "./register-page/register-page.module";
 import { ForgotPasswordPageModule } from "./forgot-password-page/forgot-password-page.module";
 import { ResetPasswordPageModule } from "./reset-password-page/reset-password-page.module";
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { LoadingPageModule } from "./loading-page/loading-page.module";
+import { ErrorPageModule } from "./error-page/error-page.module";
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       // Register the ServiceWorker as soon as the application is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    LoadingPageModule,
+    ErrorPageModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

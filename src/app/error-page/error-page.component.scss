@@ -1,0 +1,16 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  div {
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
