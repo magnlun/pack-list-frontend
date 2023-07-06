@@ -45,7 +45,6 @@ export class PackListComponent implements OnInit, OnDestroy {
         })
       ).subscribe((list) => {
         if(list) {
-          this.categoryList = [...new Set(list.items.map((item) => item.category))]
           this.packList = list;
         }
       })
@@ -102,10 +101,10 @@ export class PackListComponent implements OnInit, OnDestroy {
       }, new Map<string | null, PackItem[]>());
       this.categoryList = [...new Set(this.packList.items.map((item) => item.category))].sort((a, b) => {
         if(a === null) {
-          return -1;
+          return 1;
         }
         if(b === null) {
-          return 1;
+          return -1;
         }
         return a.localeCompare(b);
       });
