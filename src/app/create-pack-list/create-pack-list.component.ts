@@ -3,18 +3,17 @@ import { AuthenticationService } from '../authentication.service';
 import { Subscription } from 'rxjs';
 import { PackListService } from "../pack-list.service";
 import { Router } from "@angular/router";
-import { mergeMap } from "rxjs/operators";
+import { distinctUntilChanged, mergeMap } from "rxjs/operators";
 import { RadioButtonData } from "../components/radio-button-group/radio-button-group.component";
 import { TemplateService } from "../template.service";
+import { LoggedInComponent } from "../components/core";
 
 @Component({
   selector: 'app-create-pack-list',
   templateUrl: './create-pack-list.component.html',
   styleUrls: ['./create-pack-list.component.scss']
 })
-export class CreatePackListComponent implements OnInit, OnDestroy {
-
-  private subscriptions = new Subscription();
+export class CreatePackListComponent extends LoggedInComponent {
 
   persons: RadioButtonData[] = [];
   destinations: RadioButtonData[] = [];
@@ -29,63 +28,52 @@ export class CreatePackListComponent implements OnInit, OnDestroy {
   emptyNameError = false;
   durationErrorMessage: string | undefined;
 
-  constructor(private authService: AuthenticationService, private packListService: PackListService, private templateService: TemplateService, private router: Router) { }
-
-  ngOnInit(): void {
-    this.subscriptions.add(
-      this.authService.loggedIn$.subscribe((loggedIn) => {
-        if(!loggedIn) {
-          this.router.navigate(["/login"]);
-        }
-        else {
-          this.subscriptions.add(
-            this.templateService.getPersons().subscribe((persons) => {
-              this.persons = persons.map((duration) => {
-                return {
-                  label: duration.name,
-                  data: duration
-                }
-              });
-            })
-          );
-          this.subscriptions.add(
-            this.templateService.getDurations().subscribe((durations) => {
-              this.durations = durations.map((duration) => {
-                return {
-                  label: duration.name,
-                  data: duration
-                }
-              });
-              this.selectedDuration = this.durations[0];
-            })
-          );
-          this.subscriptions.add(
-            this.templateService.getDestinations().subscribe((destinations) => {
-              this.destinations = destinations.map((duration) => {
-                return {
-                  label: duration.name,
-                  data: duration
-                }
-              });
-            })
-          );
-          this.subscriptions.add(
-            this.templateService.getActivities().subscribe((activities) => {
-              this.activities = activities.map((activity) => {
-                return {
-                  label: activity.name,
-                  data: activity
-                }
-              });
-            })
-          );
-        }
-      })
-    )
+  constructor(authService: AuthenticationService, private packListService: PackListService, private templateService: TemplateService, router: Router) {
+    super(authService, router);
   }
 
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+  onLogin(): void {
+    this.subscriptions.add(
+      this.templateService.getPersons().subscribe((persons) => {
+        this.persons = persons.map((duration) => {
+          return {
+            label: duration.name,
+            data: duration
+          }
+        });
+      })
+    );
+    this.subscriptions.add(
+      this.templateService.getDurations().subscribe((durations) => {
+        this.durations = durations.map((duration) => {
+          return {
+            label: duration.name,
+            data: duration
+          }
+        });
+        this.selectedDuration = this.durations[0];
+      })
+    );
+    this.subscriptions.add(
+      this.templateService.getDestinations().subscribe((destinations) => {
+        this.destinations = destinations.map((duration) => {
+          return {
+            label: duration.name,
+            data: duration
+          }
+        });
+      })
+    );
+    this.subscriptions.add(
+      this.templateService.getActivities().subscribe((activities) => {
+        this.activities = activities.map((activity) => {
+          return {
+            label: activity.name,
+            data: activity
+          }
+        });
+      })
+    );
   }
 
   submit() {
