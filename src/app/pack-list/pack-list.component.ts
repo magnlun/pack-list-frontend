@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { merge, Observable, Subscription } from 'rxjs';
 import { PackListService } from '../pack-list.service'
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, mergeMap, startWith } from 'rxjs/operators';
@@ -174,6 +174,23 @@ export class PackListComponent implements OnInit, OnDestroy {
         this.sortPacklist();
       })
     );
+  }
+
+  unselectAll() {
+    let packList = this.packList;
+    if(packList) {
+      this.subscriptions.add(
+        merge(
+          packList.items
+            .filter((item) => item.checked)
+            .map((item) => {
+              item.checked = true;
+              return item;
+            })
+            .map((item) => this.service.saveItemState(item))
+        ).subscribe(() => this.sortPacklist())
+      );
+    }
   }
 
   cloneList() {
