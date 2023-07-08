@@ -184,7 +184,7 @@ export class PackListComponent implements OnInit, OnDestroy {
           packList.items
             .filter((item) => item.checked)
             .map((item) => {
-              item.checked = true;
+              item.checked = false;
               return item;
             })
             .map((item) => this.service.saveItemState(item).subscribe())
