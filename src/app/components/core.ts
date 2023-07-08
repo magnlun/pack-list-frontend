@@ -17,6 +17,7 @@ export abstract class LoggedInComponent implements OnInit, OnDestroy {
         distinctUntilChanged()
       ).subscribe((loggedIn) => {
         if(loggedIn) {
+          console.log("Logged in");
           this.onLogin();
         }
         else {

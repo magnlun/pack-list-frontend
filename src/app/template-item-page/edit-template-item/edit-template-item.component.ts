@@ -29,6 +29,7 @@ export class EditTemplateItemComponent extends LoggedInComponent implements OnIn
   }
 
   onLogin() {
+    console.log("Fetching logged in items")
     this.subscriptions.add(
       this.templateService.getTemplateItems().subscribe((templateItems) => {
         const templateItemMap = templateItems

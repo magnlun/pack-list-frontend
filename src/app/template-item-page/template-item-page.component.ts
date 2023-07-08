@@ -27,6 +27,7 @@ export class TemplateItemPageComponent extends LoggedInComponent {
 
 
   onLogin(): void {
+    console.log("Fetching template item items")
     this.subscriptions.add(
       this.packService.$items.subscribe((items) => {
         this.items = items;

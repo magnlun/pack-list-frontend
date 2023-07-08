@@ -33,6 +33,7 @@ export class CreatePackListComponent extends LoggedInComponent {
   }
 
   onLogin(): void {
+    console.log("Fetching create pack list items")
     this.subscriptions.add(
       this.templateService.getPersons().subscribe((persons) => {
         this.persons = persons.map((duration) => {

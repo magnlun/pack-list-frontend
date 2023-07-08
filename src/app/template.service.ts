@@ -32,10 +32,12 @@ export class TemplateService {
   }
 
   getTemplateItems(): Observable<TemplateItem[]> {
+    console.log("Fetching template items")
     let response = this.http.get<TemplateItemResponse[]>('/rest/template-items/');
     return combineLatest([response, this.$persons, this.$durations, this.$destinations, this.$activities, this.packService.$itemsById]).pipe(
       first(),
       map(([response, allPersons, allDurations, allDestionations, allActivities, itemsById]) => {
+        console.log("Mapping");
         const personMap = allPersons.reduce((map, template) => {
           map.set(template.id, template)
           return map;
