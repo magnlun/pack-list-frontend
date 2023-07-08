@@ -71,7 +71,7 @@ export class PackListService {
   }
 
   createItem(name: string): Observable<Item> {
-    let newItem = this.http.post<Item>('/rest/items/', {name});
+    let newItem = this.http.post<Item>('/rest/items/', {name: name.trim()});
     return combineLatest([newItem, this.$items]).pipe(
       first(),
       map(([item, existingItems]) => {

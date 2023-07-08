@@ -99,15 +99,17 @@ export class PackListComponent implements OnInit, OnDestroy {
         }
         return map;
       }, new Map<string | null, PackItem[]>());
-      this.categoryList = [...new Set(this.packList.items.map((item) => item.category))].sort((a, b) => {
-        if(a === null) {
-          return 1;
+      this.categoryList = [...new Set(this.packList.items.map((item) => item.category))]
+        .sort((a, b) => {
+          if(a === null) {
+            return 1;
+          }
+          if(b === null) {
+            return -1;
+          }
+          return a.localeCompare(b);
         }
-        if(b === null) {
-          return -1;
-        }
-        return a.localeCompare(b);
-      });
+      );
     }
   }
 
@@ -177,7 +179,7 @@ export class PackListComponent implements OnInit, OnDestroy {
   cloneList() {
     if(this.packList) {
       const createRequest = {
-        name: this.packList.name,
+        name: 'Kopia av ' + this.packList.name,
         items: this.packList.items.map((packItem) => packItem.item)
       };
       this.subscriptions.add(
