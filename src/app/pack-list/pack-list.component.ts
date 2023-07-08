@@ -187,7 +187,7 @@ export class PackListComponent implements OnInit, OnDestroy {
               item.checked = true;
               return item;
             })
-            .map((item) => this.service.saveItemState(item))
+            .map((item) => this.service.saveItemState(item).subscribe())
         ).subscribe(() => this.sortPacklist())
       );
     }
