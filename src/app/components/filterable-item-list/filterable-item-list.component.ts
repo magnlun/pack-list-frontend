@@ -9,7 +9,7 @@ import { PackListService } from "../../pack-list.service";
   templateUrl: './filterable-item-list.component.html',
   styleUrls: ['./filterable-item-list.component.scss']
 })
-export class FilterableItemListComponent implements OnInit, OnDestroy {
+export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy {
 
   items: Item[] = [];
   @Input()
@@ -22,6 +22,10 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
 
 
   constructor(private templateService: TemplateService, private packListService: PackListService) {
+  }
+
+  ngOnChanges(): void {
+    this.updateSearch(this.searchString);
   }
 
   ngOnInit(): void {
