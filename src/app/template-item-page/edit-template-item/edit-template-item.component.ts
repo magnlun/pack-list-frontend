@@ -91,8 +91,10 @@ class TemplateGrouping {
   }
 
   addItem(item: Item, id: number) {
-    this.items.push(item);
-    this.idMapping.set(item, id);
+    if (this.items.findIndex((exitingItem) => exitingItem.id === item.id) < 0) {
+      this.items.push(item);
+      this.idMapping.set(item, id);
+    }
   }
 }
 

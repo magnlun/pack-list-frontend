@@ -42,6 +42,10 @@ export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy
     this.displayItems = this.items.filter((item) => item.name.toLowerCase().includes(this.searchString.toLowerCase()));
   }
 
+  isSelected(item: Item) {
+    return this.selectedItems.findIndex((selectedItem) => selectedItem.id === item.id) >= 0;
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
