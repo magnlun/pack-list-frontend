@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Item } from "../../models";
 import { TemplateService } from "../../template.service";
 import { Subscription } from "rxjs";
@@ -9,11 +9,14 @@ import { PackListService } from "../../pack-list.service";
   templateUrl: './filterable-item-list.component.html',
   styleUrls: ['./filterable-item-list.component.scss']
 })
-export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy {
+export class FilterableItemListComponent implements OnInit, OnDestroy {
 
   items: Item[] = [];
   @Input()
   selectedItems: Item[] = [];
+  @Input()
+  disabled = false;
+
   @Output()
   updateSelectStatus = new EventEmitter<[Item, boolean]>();
   displayItems: Item[] = [];
@@ -22,10 +25,6 @@ export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy
 
 
   constructor(private templateService: TemplateService, private packListService: PackListService) {
-  }
-
-  ngOnChanges(): void {
-    this.updateSearch(this.searchString);
   }
 
   ngOnInit(): void {

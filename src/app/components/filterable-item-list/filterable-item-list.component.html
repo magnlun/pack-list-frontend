@@ -1,6 +1,6 @@
 
 <app-text-input [label]="'Sök'" [model]="searchString" (model)="updateSearch($event)"></app-text-input>
-<mat-selection-list [class]="'itemSelector'">
+<mat-selection-list [class]="'itemSelector'" [disabled]="disabled">
   <mat-list-option *ngFor="let item of displayItems" [value]="item" [selected]="isSelected(item)" (click)="updateCheckStatus(item)">
     {{item.name}}
   </mat-list-option>

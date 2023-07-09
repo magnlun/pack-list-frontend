@@ -107,6 +107,9 @@ function getTemplateKey(templateItem: TemplateItem): string {
 }
 
 function stringifyTemplateItem(key: TemplateGrouping): string {
+  if (!key.persons.length && !key.destinations.length && !key.durations.length && !key.activities.length) {
+    return "Alltid";
+  }
   const names = key.persons.map((person) => person.name);
   const destinations = key.destinations.map((person) => person.name);
   const durations = key.durations.map((person) => person.name);
