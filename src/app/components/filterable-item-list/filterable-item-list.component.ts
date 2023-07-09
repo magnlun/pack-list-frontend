@@ -35,7 +35,7 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
 
   updateSearch($event: string) {
     this.searchString = $event;
-    this.displayItems = this.items.filter((item) => item.name.includes(this.searchString));
+    this.displayItems = this.items.filter((item) => item.name.toLowerCase().includes(this.searchString.toLowerCase()));
   }
 
   ngOnDestroy(): void {
