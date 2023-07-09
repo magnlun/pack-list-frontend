@@ -42,15 +42,15 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  updateCheckStatus(newSelected: Item[]) {
-    const newSelectedSet = new Set<Item>(newSelected);
-    const selectedSet = new Set<Item>(this.selectedItems);
-    this.selectedItems
-      .filter((item) => !newSelectedSet.has(item))
-      .forEach((item) => this.updateSelectStatus.emit([item, false]));
-    newSelected
-      .filter((item) => !selectedSet.has(item))
-      .forEach((item) => this.updateSelectStatus.emit([item, true]));
-    this.selectedItems = newSelected
+  updateCheckStatus(newSelected: Item) {
+    let index = this.selectedItems.indexOf(newSelected);
+    if (index >= 0) {
+      this.selectedItems.splice(index, 1);
+      this.updateSelectStatus.emit([newSelected, false]);
+    }
+    else {
+      this.selectedItems.push(newSelected);
+      this.updateSelectStatus.emit([newSelected, true]);
+    }
   }
 }

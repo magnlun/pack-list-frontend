@@ -1,7 +1,7 @@
 
 <app-text-input [label]="'Sök'" [model]="searchString" (model)="updateSearch($event)"></app-text-input>
-<mat-selection-list [ngModel]="selectedItems" (ngModelChange)="updateCheckStatus($event)" [class]="'itemSelector'">
-  <mat-list-option *ngFor="let item of displayItems" [value]="item">
+<mat-selection-list [ngModel]="selectedItems" [class]="'itemSelector'">
+  <mat-list-option *ngFor="let item of displayItems" [value]="item" [selected]="selectedItems.includes(item)" (click)="updateCheckStatus(item)">
     {{item.name}}
   </mat-list-option>
 </mat-selection-list>
