@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
 import { SecureHttp } from './http-client.service';
 import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
-import { Item, PackItem, PackList, Template } from "./models";
+import { Item, PackItem, PackList, Template, TemplateItem } from "./models";
+import { TemplateService } from "./template.service";
+import { ItemService } from "./item.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +12,17 @@ import { Item, PackItem, PackList, Template } from "./models";
 export class PackListService {
 
   $packLists = new ReplaySubject<PackList[]>(1);
-  $items = new ReplaySubject<Item[]>(1);
-  $itemsById = new ReplaySubject<Map<number, Item>>(1);
 
-  constructor(private http: SecureHttp) { }
+  constructor(private http: SecureHttp, private templateService: TemplateService, private itemService: ItemService) { }
 
   getPackList(id: number): Observable<PackList | undefined> {
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
     return this.$packLists.pipe(
       first(),
       map((items) => items.find((item) => item.id === id)),
@@ -24,9 +31,9 @@ export class PackListService {
           return of(list);
         }
         let getResponse = this.http.get<PackListResponse>(`/rest/pack-lists/${id}/`);
-        return combineLatest([getResponse, this.$itemsById]).pipe(
+        return combineLatest([getResponse, this.itemService.$itemsById, $persons]).pipe(
           first(),
-          map(([list, itemMap]) => this.mapPackListResponse(list, itemMap))
+          map(([list, itemMap, persons]) => this.mapPackListResponse(list, itemMap, persons))
         );
       })
     )
@@ -51,54 +58,36 @@ export class PackListService {
       });
   }
 
-  mapPackListResponse(list: PackListResponse, itemMap: Map<number, Item>): PackList {
+  mapPackListResponse(list: PackListResponse, itemMap: Map<number, Item>, personMap: Map<number, Template>): PackList {
+    const personRetriever = (item: PackItemResponse) => {
+      let personId = item.person;
+      if (personId !== undefined) {
+        return personMap.get(personId);
+      }
+      return undefined;
+    }
     return {
       name: list.name,
       id: list.id,
-      items: list.items.map((item) => new PackItem(item.id, itemMap.get(item.item) as Item, item.checked)),
+      items: list.items.map((item) => new PackItem(item.id, itemMap.get(item.item) as Item, item.checked, personRetriever(item))),
       shareId: list.shareId
     }
   }
 
   getPackLists(): Observable<PackList[]> {
     let $response = this.http.get<PackListResponse[]>('/rest/pack-lists/');
-    return combineLatest([$response, this.$itemsById]).pipe(
-      map(([response, itemMap]) => {
-        return response.map((list) => this.mapPackListResponse(list, itemMap))
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
+    return combineLatest([$response, this.itemService.$itemsById, $persons]).pipe(
+      map(([response, itemMap, persons]) => {
+        return response.map((list) => this.mapPackListResponse(list, itemMap, persons))
       }),
       tap((lists) => this.$packLists.next(lists))
-    );
-  }
-
-  createItem(name: string): Observable<Item> {
-    let newItem = this.http.post<Item>('/rest/items/', {name: name.trim()});
-    return combineLatest([newItem, this.$items]).pipe(
-      first(),
-      map(([item, existingItems]) => {
-        let items = existingItems.concat([item]);
-        this.$items.next(items);
-        this.$itemsById.next(
-          items.reduce((map, item) => {
-            map.set(item.id, item);
-            return map;
-          }, new Map<number, Item>())
-        )
-        return item
-      })
-    )
-  }
-
-  getItems(): Observable<Item[]> {
-    return this.http.get<Item[]>('/rest/items/').pipe(
-      tap((items) => {
-        this.$items.next(items);
-        this.$itemsById.next(
-          items.reduce((map, item) => {
-            map.set(item.id, item);
-            return map;
-          }, new Map<number, Item>())
-        )
-      })
     );
   }
 
@@ -108,15 +97,23 @@ export class PackListService {
       items: packList.items.map(item => {
         return {
           checked: false,
-          item: item.id
+          item: item.item.id,
+          person: item.person?.id
         }
       })
     };
     let $response = this.http.post<PackListResponse>('/rest/pack-lists/', data);
-    return combineLatest([$response, this.$itemsById, this.$packLists]).pipe(
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
+    return combineLatest([$response, this.itemService.$itemsById, this.$packLists, $persons]).pipe(
       first(),
-      map(([response, itemMap, packLists]) => {
-        const packList = this.mapPackListResponse(response, itemMap);
+      map(([response, itemMap, packLists, persons]) => {
+        const packList = this.mapPackListResponse(response, itemMap, persons);
         packLists.push(packList);
         this.$packLists.next(packLists);
         return packList;
@@ -130,10 +127,22 @@ export class PackListService {
       checked: false,
       list_id: packList.id
     });
-    return combineLatest([$response, this.$itemsById, this.$packLists]).pipe(
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
+    return combineLatest([$response, this.itemService.$itemsById, this.$packLists, $persons]).pipe(
       first(),
-      map(([response, itemMap, lists]) => {
-        let packItem = new PackItem(response.id, itemMap.get(response.item)!, response.checked);
+      map(([response, itemMap, lists, persons]) => {
+        let person = undefined;
+        let personId = response.person;
+        if (personId !== undefined) {
+          person = persons.get(personId);
+        }
+        let packItem = new PackItem(response.id, itemMap.get(response.item)!, response.checked, person);
         packList.items.push(packItem);
         lists.splice(lists.findIndex((list) => list.id === packList.id), 1, packList);
         this.$packLists.next(lists)
@@ -155,10 +164,17 @@ export class PackListService {
         throw error;
       })
     );
-    return combineLatest([$response, this.$itemsById, this.$packLists]).pipe(
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
+    return combineLatest([$response, this.itemService.$itemsById, this.$packLists, $persons]).pipe(
       first(),
-      map(([response, itemMap, packLists]) => {
-        const packList = this.mapPackListResponse(response, itemMap);
+      map(([response, itemMap, packLists, persons]) => {
+        const packList = this.mapPackListResponse(response, itemMap, persons);
         packLists.push(packList);
         this.$packLists.next(packLists);
         return packList;
@@ -171,10 +187,17 @@ export class PackListService {
       id: packList.id,
       name: packList.name
     });
-    return combineLatest([$response, this.$itemsById, this.$packLists]).pipe(
+    let $persons = this.templateService.$persons
+      .pipe(
+        map((persons) => persons.reduce((map, person) => {
+          map.set(person.id, person);
+          return map;
+        }, new Map<number, Template>()))
+      );
+    return combineLatest([$response, this.itemService.$itemsById, this.$packLists, $persons]).pipe(
       first(),
-      map(([response, itemMap, packLists]) => {
-        const packList = this.mapPackListResponse(response, itemMap);
+      map(([response, itemMap, packLists, persons]) => {
+        const packList = this.mapPackListResponse(response, itemMap, persons);
         const packListIndex = packLists.findIndex((list) => list.id === packList.id);
         packLists[packListIndex] = packList;
         this.$packLists.next(packLists);
@@ -186,7 +209,12 @@ export class PackListService {
 
 export interface CreatePackListRequest {
   name: string;
-  items: Item[];
+  items: CreatePackItemRequest[];
+}
+
+export interface CreatePackItemRequest {
+  item: Item;
+  person?: Template;
 }
 
 
@@ -207,6 +235,7 @@ interface PackItemResponse {
   item: number;
   checked: boolean;
   id: number;
+  person?: number;
 }
 
 interface PackItemRequest {

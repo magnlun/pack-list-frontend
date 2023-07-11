@@ -3,6 +3,7 @@ import { Item } from "../../models";
 import { TemplateService } from "../../template.service";
 import { Subscription } from "rxjs";
 import { PackListService } from "../../pack-list.service";
+import { ItemService } from "../../item.service";
 
 @Component({
   selector: 'app-filterable-item-list',
@@ -24,12 +25,12 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
 
-  constructor(private templateService: TemplateService, private packListService: PackListService) {
+  constructor(private templateService: TemplateService, private packListService: PackListService, private itemService: ItemService) {
   }
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.packListService.getItems().subscribe((items) => {
+      this.itemService.$items.subscribe((items) => {
         this.items = items;
         this.updateSearch(this.searchString);
       })

@@ -7,6 +7,7 @@ import { Item, PackItem, PackList } from "../models";
 import { FormControl } from "@angular/forms";
 import { Breakpoints } from "@angular/cdk/layout";
 import { LayoutService } from "../layout.service";
+import { ItemService } from "../item.service";
 
 @Component({
   selector: 'app-pack-list',
@@ -30,7 +31,7 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   displayFn: any = (item: Item) => item.name;
 
-  constructor(private service: PackListService, private route: ActivatedRoute, private router: Router, private layoutService: LayoutService) { }
+  constructor(private service: PackListService, private route: ActivatedRoute, private router: Router, private layoutService: LayoutService, private itemService: ItemService) { }
 
   ngOnInit(): void {
 
@@ -60,7 +61,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       map(value => this._filter(value || '')),
     );
     this.subscriptions.add(
-      this.service.$items.subscribe((items) => this.items = items)
+      this.itemService.$items.subscribe((items) => this.items = items)
     )
   }
 
@@ -197,7 +198,12 @@ export class PackListComponent implements OnInit, OnDestroy {
     if(this.packList) {
       const createRequest = {
         name: 'Kopia av ' + this.packList.name,
-        items: this.packList.items.map((packItem) => packItem.item)
+        items: this.packList.items.map((packItem) => {
+          return {
+            item: packItem.item,
+            person: packItem.person
+          }
+        })
       };
       this.subscriptions.add(
         this.service.createPackList(createRequest).subscribe((newList) => this.router.navigate(['/list', newList.id]))
@@ -221,7 +227,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       }
       else {
         this.subscriptions.add(
-          this.service.createItem(itemName).subscribe((item) => {
+          this.itemService.createItem(itemName).subscribe((item) => {
             this.addItem(item)
           })
         );

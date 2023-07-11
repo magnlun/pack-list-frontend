@@ -35,7 +35,7 @@ export class CreatePackListComponent extends LoggedInComponent {
   onLogin(): void {
     console.log("Fetching create pack list items")
     this.subscriptions.add(
-      this.templateService.getPersons().subscribe((persons) => {
+      this.templateService.$persons.subscribe((persons) => {
         this.persons = persons.map((duration) => {
           return {
             label: duration.name,
@@ -45,7 +45,7 @@ export class CreatePackListComponent extends LoggedInComponent {
       })
     );
     this.subscriptions.add(
-      this.templateService.getDurations().subscribe((durations) => {
+      this.templateService.$durations.subscribe((durations) => {
         this.durations = durations.map((duration) => {
           return {
             label: duration.name,
@@ -56,7 +56,7 @@ export class CreatePackListComponent extends LoggedInComponent {
       })
     );
     this.subscriptions.add(
-      this.templateService.getDestinations().subscribe((destinations) => {
+      this.templateService.$destinations.subscribe((destinations) => {
         this.destinations = destinations.map((duration) => {
           return {
             label: duration.name,
@@ -66,7 +66,7 @@ export class CreatePackListComponent extends LoggedInComponent {
       })
     );
     this.subscriptions.add(
-      this.templateService.getActivities().subscribe((activities) => {
+      this.templateService.$activities.subscribe((activities) => {
         this.activities = activities.map((activity) => {
           return {
             label: activity.name,
@@ -92,12 +92,12 @@ export class CreatePackListComponent extends LoggedInComponent {
         this.selectedDestinations.map((elem) => elem.data),
         this.selectedActivities.map((elem) => elem.data),
         this.selectedDuration.data).pipe(
-        mergeMap((items) => {
-          return this.packListService.createPackList({
-            name: this.name,
-            items: items
+          mergeMap((items) => {
+            return this.packListService.createPackList({
+              name: this.name,
+              items: items
+            })
           })
-        })
       ).subscribe((packList) => this.router.navigate(['/list', packList.id]))
     );
   }

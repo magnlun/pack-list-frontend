@@ -6,7 +6,17 @@ export interface PackList {
 }
 
 export class PackItem {
-  constructor(public id: number, public item: Item, public checked: boolean) {
+  constructor(public id: number, public item: Item, public checked: boolean, public person?: Template) {
+  }
+
+  get description(): string {
+    if (this.person) {
+      if (this.person.name.endsWith('s')) {
+        return this.person.name + ' ' + this.item.name;
+      }
+      return this.person.name + 's ' + this.item.name;
+    }
+    return this.item.name;
   }
 
   get category(): string | null {

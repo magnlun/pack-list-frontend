@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { MatSelectionListChange } from "@angular/material/list";
 import { TemplateService } from "../template.service";
 import { LoggedInComponent } from "../components/core";
+import { ItemService } from "../item.service";
 
 @Component({
   selector: 'app-template-item-page',
@@ -21,7 +22,7 @@ export class TemplateItemPageComponent extends LoggedInComponent {
   activities: Template[] = [];
   durations: Template[] = [];
 
-  constructor(authService: AuthenticationService, private packService: PackListService, router: Router, private templateService: TemplateService) {
+  constructor(authService: AuthenticationService, private packService: PackListService, router: Router, private templateService: TemplateService, private itemService: ItemService) {
     super(authService, router);
   }
 
@@ -29,22 +30,22 @@ export class TemplateItemPageComponent extends LoggedInComponent {
   onLogin(): void {
     console.log("Fetching template item items")
     this.subscriptions.add(
-      this.packService.$items.subscribe((items) => {
+      this.itemService.$items.subscribe((items) => {
         this.items = items;
         this.items.sort((a, b) => a.name.localeCompare(b.name))
       })
     );
     this.subscriptions.add(
-      this.templateService.getPersons().subscribe((persons) => this.persons = persons)
+      this.templateService.$persons.subscribe((persons) => this.persons = persons)
     );
     this.subscriptions.add(
-      this.templateService.getDurations().subscribe((durations) => this.durations = durations)
+      this.templateService.$durations.subscribe((durations) => this.durations = durations)
     );
     this.subscriptions.add(
-      this.templateService.getDestinations().subscribe((destinations) => this.destinations = destinations)
+      this.templateService.$destinations.subscribe((destinations) => this.destinations = destinations)
     );
     this.subscriptions.add(
-      this.templateService.getActivities().subscribe((activities) => this.activities = activities)
+      this.templateService.$activities.subscribe((activities) => this.activities = activities)
     );
   }
 }

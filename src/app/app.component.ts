@@ -5,6 +5,8 @@ import { AuthenticationService } from "./authentication.service";
 import { LayoutService } from "./layout.service";
 import { distinctUntilChanged } from "rxjs/operators";
 import { ErrorHandlingService } from "./error-handling.service";
+import { TemplateService } from "./template.service";
+import { ItemService } from "./item.service";
 
 @Component({
   selector: 'app-root',
@@ -20,13 +22,13 @@ export class AppComponent implements OnInit, OnDestroy {
   loggedIn = false;
   loaded = false;
   hasError = false;
-  constructor(private service: PackListService, private authService: AuthenticationService, private layoutService: LayoutService, private errorService: ErrorHandlingService) {}
+  constructor(private service: PackListService, private authService: AuthenticationService, private layoutService: LayoutService, private errorService: ErrorHandlingService, private templateService: TemplateService, private itemService: ItemService) {}
   ngOnInit(): void {
     this.subscriptions.add(
       this.errorService.$hasMajorError.subscribe((error) => this.hasError = true)
     )
     this.subscriptions.add(
-      this.service.getItems().subscribe()
+      this.itemService.getItems().subscribe()
     );
     this.subscriptions.add(
       this.authService.checkLoginStatus().subscribe()
@@ -65,6 +67,18 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loggedIn = loggedIn;
         if(loggedIn) {
           this.subscriptions.add(this.service.getPackLists().subscribe());
+          this.subscriptions.add(
+            this.templateService.getPersons().subscribe()
+          );
+          this.subscriptions.add(
+            this.templateService.getActivities().subscribe()
+          );
+          this.subscriptions.add(
+            this.templateService.getDestinations().subscribe()
+          );
+          this.subscriptions.add(
+            this.templateService.getDurations().subscribe()
+          );
         }
         else {
           this.service.$packLists.next([]);

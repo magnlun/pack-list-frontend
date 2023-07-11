@@ -4,18 +4,19 @@ import { combineLatest, Observable, ReplaySubject } from "rxjs";
 import { SecureHttp } from "./http-client.service";
 import { first, map, tap } from "rxjs/operators";
 import { PackListService } from './pack-list.service';
+import { ItemService } from "./item.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TemplateService {
 
-  private $persons = new ReplaySubject<Template[]>(1);
-  private $destinations = new ReplaySubject<Template[]>(1);
-  private $durations = new ReplaySubject<Template[]>(1);
-  private $activities = new ReplaySubject<Template[]>(1);
+  $persons = new ReplaySubject<Template[]>(1);
+  $destinations = new ReplaySubject<Template[]>(1);
+  $durations = new ReplaySubject<Template[]>(1);
+  $activities = new ReplaySubject<Template[]>(1);
 
-  constructor(private http: SecureHttp, private packService: PackListService) { }
+  constructor(private http: SecureHttp, private itemService: ItemService) { }
 
   addTemplate(selectedPersons: Template[], selectedDestinations: Template[], selectedDurations: Template[], selectedActivities: Template[], item: Item): Observable<any> {
     return this.http.post('/rest/template-items/', {
@@ -34,7 +35,7 @@ export class TemplateService {
   getTemplateItems(): Observable<TemplateItem[]> {
     console.log("Fetching template items")
     let response = this.http.get<TemplateItemResponse[]>('/rest/template-items/');
-    return combineLatest([response, this.$persons, this.$durations, this.$destinations, this.$activities, this.packService.$itemsById]).pipe(
+    return combineLatest([response, this.$persons, this.$durations, this.$destinations, this.$activities, this.itemService.$itemsById]).pipe(
       first(),
       map(([response, allPersons, allDurations, allDestionations, allActivities, itemsById]) => {
         console.log("Mapping");
@@ -73,17 +74,44 @@ export class TemplateService {
     )
   }
 
-  getItemsFromTemplates(selectedPersons: Template[], selectedDestinations: Template[], selectedActivities: Template[], duration: Template): Observable<Item[]> {
+  getItemsFromTemplates(selectedPersons: Template[], selectedDestinations: Template[], selectedActivities: Template[], duration: Template): Observable<PersonItem[]> {
     const personQuery = selectedPersons.map((person) => `person=${person.id}`);
     const destinationQuery = selectedDestinations.map((person) => `destination=${person.id}`);
     const activityQuery = selectedActivities.map((person) => `activity=${person.id}`);
     const query = [...personQuery, ...destinationQuery, ...activityQuery, `duration=${duration.id}`].join('&');
-    let $response = this.http.get<{ item: number }[]>(`/rest/template-items/?${query}`);
-    return combineLatest([$response, this.packService.$itemsById]).pipe(
+    let $response = this.http.get<{ item: number, persons: number[] }[]>(`/rest/template-items/?${query}`);
+    return combineLatest([$response, this.itemService.$itemsById]).pipe(
       first(),
       map(([templateItems, itemMap]) => {
-        const itemIds = [...new Set(templateItems.map((item) => item.item))];
-        return itemIds.map((id) => itemMap.get(id)!)
+        const items: PersonItem[] = [];
+        templateItems.forEach((templateItem) => {
+          if (templateItem.persons.length === 0) {
+            if (!items.find((item) => item.item.id === templateItem.item && !item.person)) {
+              items.push({
+                item: itemMap.get(templateItem.item)!
+              })
+            }
+          }
+          else {
+            templateItem.persons
+              .flatMap((person) => {
+                const p = selectedPersons.find((sp) => sp.id === person);
+                if (p) {
+                  return [p];
+                }
+                return [];
+              })
+              .forEach((person) => {
+                if (!items.find((item) => item.item.id === templateItem.item && (item.person?.id === person.id))) {
+                  items.push({
+                    item: itemMap.get(templateItem.item)!,
+                    person
+                  });
+                }
+              })
+          }
+        })
+        return items;
       })
     );
   }
@@ -137,4 +165,9 @@ interface TemplateItemResponse {
   destionations: number[] | undefined;
   activities: number[] | undefined;
   item: number;
+}
+
+export interface PersonItem {
+  item: Item;
+  person?: Template;
 }
