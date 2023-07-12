@@ -3,6 +3,8 @@ import { PackItem } from "../../models";
 import { Breakpoints } from "@angular/cdk/layout";
 import { Subscription } from "rxjs";
 import { LayoutService } from "../../layout.service";
+import { MatDialog } from "@angular/material/dialog";
+import { EditItemComponent } from "../edit-item/edit-item.component";
 
 @Component({
   selector: 'app-item-category',
@@ -25,7 +27,7 @@ export class ItemCategoryComponent implements OnInit, OnDestroy {
 
   subscriptions = new Subscription();
 
-  constructor(private layoutService: LayoutService) {}
+  constructor(private layoutService: LayoutService, public dialog: MatDialog) {}
 
   checkClicked(item: PackItem, checked: boolean) {
     item.checked = checked;
@@ -46,6 +48,16 @@ export class ItemCategoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  textClicked(item: PackItem) {
+    let dialogRef = this.dialog.open(EditItemComponent, {
+      data: item
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      item.item.category = result.category;
+      item.person = result.person;
+    });
   }
 }
 

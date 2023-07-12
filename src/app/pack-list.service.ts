@@ -151,8 +151,15 @@ export class PackListService {
     );
   }
 
-  deletePackItem($event: PackItem): Observable<any> {
-    return this.http.delete(`/rest/pack-items/${$event.id}`)
+  deletePackItem(item: PackItem): Observable<any> {
+    return this.http.delete(`/rest/pack-items/${item.id}`)
+  }
+
+  updatePackItem(item: PackItem): Observable<any> {
+    const request: any = Object.assign({}, item);
+    request.person = item.person?.id;
+    request.item = item.item.id
+    return this.http.patch(`/rest/pack-items/${item.id}/`, request)
   }
 
   addPacklist(shareId: string): Observable<PackList> {

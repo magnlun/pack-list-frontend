@@ -20,6 +20,9 @@ export class CheckboxComponent {
   @Output()
   checkEvent = new EventEmitter<boolean>();
 
+  @Output()
+  textClickEvent = new EventEmitter();
+
   get checked(): boolean {
     return this._checked;
   }

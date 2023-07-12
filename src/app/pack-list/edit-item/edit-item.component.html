@@ -1,0 +1,7 @@
+<div>
+  <p>Ändra ägare</p>
+
+  <app-radio-button-group [buttons]="persons" (selectedButton)="selectedPerson = $event" [selectedButton]="selectedPerson" />
+
+  <button mat-button (click)="close()" cdkFocusInitial>Ok</button>
+</div>

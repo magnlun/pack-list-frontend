@@ -27,7 +27,7 @@ import { MultiSelectGroupComponent } from './multi-select-group/multi-select-gro
         ErrorMessageComponent,
         SwipeableComponent,
         FilterableItemListComponent,
-        MultiSelectGroupComponent
+        MultiSelectGroupComponent,
     ],
     exports: [
         CheckboxComponent,
