@@ -90,11 +90,15 @@ export class NewTemplateItemComponent implements OnDestroy {
   }
 
   submit() {
+    const addedItems: Set<number> = new Set<number>();
     this.selectedItems.forEach(
       (item) => {
-        this.subscriptions.add(
-          this.templateService.addTemplate(this.selectedPersons, this.selectedDestinations, this.selectedDurations, this.selectedActivities, item).subscribe()
-        )
+        if (!addedItems.has(item.id)) {
+          addedItems.add(item.id);
+          this.subscriptions.add(
+            this.templateService.addTemplate(this.selectedPersons, this.selectedDestinations, this.selectedDurations, this.selectedActivities, item).subscribe()
+          )
+        }
       }
     );
   }
