@@ -45,6 +45,7 @@ export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy
   updateSearch($event: string) {
     this.searchString = $event;
     this.displayItems = this.items.filter((item) => item.name.toLowerCase().includes(this.searchString.toLowerCase()));
+    this.sortItemList();
   }
 
   isSelected(item: Item) {
