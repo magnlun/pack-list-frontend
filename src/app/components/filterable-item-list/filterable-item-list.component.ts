@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Item } from "../../models";
 import { TemplateService } from "../../template.service";
 import { Subscription } from "rxjs";
@@ -10,7 +10,7 @@ import { ItemService } from "../../item.service";
   templateUrl: './filterable-item-list.component.html',
   styleUrls: ['./filterable-item-list.component.scss']
 })
-export class FilterableItemListComponent implements OnInit, OnDestroy {
+export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy {
 
   items: Item[] = [];
   @Input()
@@ -33,8 +33,13 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
       this.itemService.$items.subscribe((items) => {
         this.items = items;
         this.updateSearch(this.searchString);
+        this.sortItemList();
       })
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.sortItemList();
   }
 
   updateSearch($event: string) {
@@ -60,5 +65,20 @@ export class FilterableItemListComponent implements OnInit, OnDestroy {
       this.selectedItems.push(newSelected);
       this.updateSelectStatus.emit([newSelected, true]);
     }
+    this.sortItemList();
+  }
+
+  sortItemList() {
+    this.displayItems.sort((a, b) => {
+      let aIsSelected = this.selectedItems.findIndex((item) => item.id === a.id) >= 0;
+      let bIsSelected = this.selectedItems.findIndex((item) => item.id === b.id) >= 0;
+      if (aIsSelected && !bIsSelected) {
+        return -1;
+      }
+      if (bIsSelected && !aIsSelected) {
+        return 1;
+      }
+      return a.name.localeCompare(b.name);
+    })
   }
 }
