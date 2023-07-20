@@ -1,8 +1,9 @@
-import { Component, Input, OnDestroy } from '@angular/core';
-import { Item, Template } from "../../models";
-import { Subscription } from "rxjs";
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Item, Template, TemplateItem } from "../../models";
+import { combineLatest, Observable, Subscription } from "rxjs";
 import { PackListService } from "../../pack-list.service";
 import { TemplateService } from "../../template.service";
+import { map, tap } from "rxjs/operators";
 
 @Component({
   selector: 'app-new-template-item',
@@ -24,6 +25,11 @@ export class NewTemplateItemComponent implements OnDestroy {
   activities: Template[] = [];
   @Input()
   durations: Template[] = [];
+  @Input()
+  templateItems: TemplateItem[] = [];
+
+  @Output()
+  createdTemplateItems = new EventEmitter<TemplateItem[]>();
 
   selectedPersons: Template[] = [];
   selectedDestinations: Template[] = [];
@@ -91,16 +97,38 @@ export class NewTemplateItemComponent implements OnDestroy {
 
   submit() {
     const addedItems: Set<number> = new Set<number>();
+    const templateObservables: Observable<TemplateItem>[] = [];
     this.selectedItems.forEach(
       (item) => {
         if (!addedItems.has(item.id)) {
           addedItems.add(item.id);
-          this.subscriptions.add(
-            this.templateService.addTemplate(this.selectedPersons, this.selectedDestinations, this.selectedDurations, this.selectedActivities, item).subscribe()
-          )
+          templateObservables.push(
+            this.templateService.addTemplate(this.selectedPersons, this.selectedDestinations, this.selectedDurations, this.selectedActivities, item)
+            .pipe(
+              map((template) => {
+                return {
+                  id: template.id,
+                  persons: this.selectedPersons,
+                  destinations: this.selectedDestinations,
+                  durations: this.selectedDurations,
+                  activities: this.selectedActivities,
+                  item
+                }
+              })
+            )
+          );
         }
       }
     );
+    this.subscriptions.add(
+      combineLatest(templateObservables)
+        .pipe(
+          tap((items) => {
+            this.createdTemplateItems.emit(items)
+          })
+        )
+        .subscribe()
+    )
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

@@ -12,41 +12,36 @@ import { $e } from "codelyzer/angular/styles/chars";
   templateUrl: './edit-template-item.component.html',
   styleUrls: ['./edit-template-item.component.scss']
 })
-export class EditTemplateItemComponent extends LoggedInComponent implements OnInit, OnDestroy {
+export class EditTemplateItemComponent implements OnChanges, OnDestroy {
 
   @Input()
   items!: Item[];
-
-  displayItems: Item[] = [];
+  @Input()
+  templateItems: TemplateItem[] = [];
 
   selectedTemplateGroup: TemplateGrouping | undefined;
 
   templateKeys: TemplateGrouping[] = [];
-  searchString: string = '';
 
-  constructor(private templateService: TemplateService, authService: AuthenticationService, router: Router) {
-    super(authService, router);
+  subscriptions = new Subscription();
+
+  constructor(private templateService: TemplateService) {
   }
 
-  onLogin() {
-    console.log("Fetching logged in items")
-    this.subscriptions.add(
-      this.templateService.getTemplateItems().subscribe((templateItems) => {
-        const templateItemMap = templateItems
-          .reduce((map, key) => {
-            let templateKey = getTemplateKey(key);
-            let existingKey = map.get(templateKey);
-            if(existingKey) {
-              existingKey.addItem(key.item, key.id);
-            }
-            else {
-              map.set(templateKey, new TemplateGrouping(templateKey, key));
-            }
-            return map;
-          }, new Map<string, TemplateGrouping>());
-        this.templateKeys = [...templateItemMap.values()] as TemplateGrouping[];
-      })
-    );
+  ngOnChanges(changes: SimpleChanges) {
+    const templateItemMap = this.templateItems
+      .reduce((map, key) => {
+        let templateKey = getTemplateKey(key);
+        let existingKey = map.get(templateKey);
+        if(existingKey) {
+          existingKey.addItem(key.item, key.id);
+        }
+        else {
+          map.set(templateKey, new TemplateGrouping(templateKey, key));
+        }
+        return map;
+      }, new Map<string, TemplateGrouping>());
+    this.templateKeys = [...templateItemMap.values()] as TemplateGrouping[];
   }
 
   selectTemplateGroup(key: TemplateGrouping) {
@@ -68,6 +63,10 @@ export class EditTemplateItemComponent extends LoggedInComponent implements OnIn
         this.templateService.deleteTemplate(this.selectedTemplateGroup?.idMapping.get(item)!).subscribe()
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }
 

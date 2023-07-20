@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Item, Template } from "../models";
+import { Item, Template, TemplateItem } from "../models";
 import { Subscription } from "rxjs";
 import { AuthenticationService } from "../authentication.service";
 import { PackListService } from '../pack-list.service';
@@ -21,6 +21,7 @@ export class TemplateItemPageComponent extends LoggedInComponent {
   destinations: Template[] = [];
   activities: Template[] = [];
   durations: Template[] = [];
+  templateItems: TemplateItem[] = [];
 
   constructor(authService: AuthenticationService, private packService: PackListService, router: Router, private templateService: TemplateService, private itemService: ItemService) {
     super(authService, router);
@@ -28,7 +29,6 @@ export class TemplateItemPageComponent extends LoggedInComponent {
 
 
   onLogin(): void {
-    console.log("Fetching template item items")
     this.subscriptions.add(
       this.itemService.$items.subscribe((items) => {
         this.items = items;
@@ -47,5 +47,16 @@ export class TemplateItemPageComponent extends LoggedInComponent {
     this.subscriptions.add(
       this.templateService.$activities.subscribe((activities) => this.activities = activities)
     );
+    this.subscriptions.add(
+      this.templateService.getTemplateItems().subscribe((items) => this.templateItems = items)
+    );
+  }
+
+  createdTemplateItems(items: TemplateItem[]) {
+    const newItems = [...this.templateItems];
+    items.forEach((item) => {
+      newItems.push(item)
+    });
+    this.templateItems = newItems;
   }
 }

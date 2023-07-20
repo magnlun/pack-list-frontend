@@ -19,7 +19,7 @@ export class TemplateService {
   constructor(private http: SecureHttp, private itemService: ItemService) { }
 
   addTemplate(selectedPersons: Template[], selectedDestinations: Template[], selectedDurations: Template[], selectedActivities: Template[], item: Item): Observable<any> {
-    return this.http.post('/rest/template-items/', {
+    return this.http.post<TemplateItem>('/rest/template-items/', {
       persons: selectedPersons.map((template) => template.id),
       destinations: selectedDestinations.map((template) => template.id),
       durations: selectedDurations.map((template) => template.id),
@@ -33,7 +33,6 @@ export class TemplateService {
   }
 
   getTemplateItems(): Observable<TemplateItem[]> {
-    console.log("Fetching template items")
     let response = this.http.get<TemplateItemResponse[]>('/rest/template-items/');
     return combineLatest([response, this.$persons, this.$durations, this.$destinations, this.$activities, this.itemService.$itemsById]).pipe(
       first(),
