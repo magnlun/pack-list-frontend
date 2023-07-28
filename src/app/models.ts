@@ -6,7 +6,7 @@ export interface PackList {
 }
 
 export class PackItem {
-  constructor(public id: number, public item: Item, public checked: boolean, public person?: Template) {
+  constructor(public id: number, public item: Item, public checked: boolean, public checkedAtTime: number | undefined, public person?: Template | undefined) {
   }
 
   get description(): string {

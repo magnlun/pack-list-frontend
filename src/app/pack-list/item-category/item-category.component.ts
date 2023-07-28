@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { PackItem } from "../../models";
 import { Breakpoints } from "@angular/cdk/layout";
 import { Subscription } from "rxjs";
@@ -11,7 +11,7 @@ import { EditItemComponent } from "../edit-item/edit-item.component";
   templateUrl: './item-category.component.html',
   styleUrls: ['./item-category.component.scss']
 })
-export class ItemCategoryComponent implements OnInit, OnDestroy {
+export class ItemCategoryComponent implements OnInit, OnChanges, OnDestroy {
   @Input()
   name: string | null | undefined;
 
@@ -29,8 +29,26 @@ export class ItemCategoryComponent implements OnInit, OnDestroy {
 
   constructor(private layoutService: LayoutService, public dialog: MatDialog) {}
 
+  ngOnChanges() {
+    this.items.sort((a, b) => {
+      if(a.checkedAtTime && b.checkedAtTime) {
+        const result = b.checkedAtTime - a.checkedAtTime;
+        if (result !== 0) {
+          return result;
+        }
+      }
+      return a.description.localeCompare(b.description);
+    })
+  }
+
   checkClicked(item: PackItem, checked: boolean) {
     item.checked = checked;
+    if(checked) {
+      item.checkedAtTime = Date.now();
+    }
+    else {
+      item.checkedAtTime = undefined;
+    }
     this.updateEvent.emit(item);
   }
 

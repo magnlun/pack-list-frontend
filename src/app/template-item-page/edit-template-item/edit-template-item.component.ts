@@ -55,7 +55,9 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
       const durations = this.selectedTemplateGroup!.durations;
       const activities = this.selectedTemplateGroup!.activities;
       this.subscriptions.add(
-        this.templateService.addTemplate(persons, destinations, durations, activities, item).subscribe()
+        this.templateService.addTemplate(persons, destinations, durations, activities, item).subscribe((templateItem) => {
+          this.selectedTemplateGroup!.idMapping.set(item, templateItem.id)
+        })
       );
     }
     else {

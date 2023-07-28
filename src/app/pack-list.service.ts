@@ -69,7 +69,7 @@ export class PackListService {
     return {
       name: list.name,
       id: list.id,
-      items: list.items.map((item) => new PackItem(item.id, itemMap.get(item.item) as Item, item.checked, personRetriever(item))),
+      items: list.items.map((item) => new PackItem(item.id, itemMap.get(item.item) as Item, item.checked, item.checked_at_time, personRetriever(item))),
       shareId: list.shareId
     }
   }
@@ -142,7 +142,7 @@ export class PackListService {
         if (personId !== undefined) {
           person = persons.get(personId);
         }
-        let packItem = new PackItem(response.id, itemMap.get(response.item)!, response.checked, person);
+        let packItem = new PackItem(response.id, itemMap.get(response.item)!, response.checked, response.checked_at_time, person);
         packList.items.push(packItem);
         lists.splice(lists.findIndex((list) => list.id === packList.id), 1, packList);
         this.$packLists.next(lists)
@@ -243,6 +243,7 @@ interface PackItemResponse {
   checked: boolean;
   id: number;
   person?: number;
+  checked_at_time?: number;
 }
 
 interface PackItemRequest {
