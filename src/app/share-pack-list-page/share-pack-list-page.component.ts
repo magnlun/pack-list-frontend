@@ -43,7 +43,7 @@ export class SharePackListPageComponent implements OnDestroy, OnInit {
         })
       );
     }
-    this.isLoggedIn = true;
+    this.isLoggedIn = loggedIn;
     this.loading = false;
   }
 
