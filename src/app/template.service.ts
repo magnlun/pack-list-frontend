@@ -56,7 +56,7 @@ export class TemplateService {
         }, new Map<number, Template>());
         return response.map((templateItem) => {
           const persons = (templateItem.persons || []).map((id) => personMap.get(id)!);
-          const destinations = (templateItem.destionations || []).map((id) => destinationMap.get(id)!);
+          const destinations = (templateItem.destinations || []).map((id) => destinationMap.get(id)!);
           const durations = (templateItem.durations || []).map((id) => durationMap.get(id)!);
           const activities = (templateItem.activities || []).map((id) => activitiesMap.get(id)!);
           const item = itemsById.get(templateItem.item)!;
@@ -161,7 +161,7 @@ interface TemplateItemResponse {
   id: number;
   persons: number[] | undefined;
   durations: number[] | undefined;
-  destionations: number[] | undefined;
+  destinations: number[] | undefined;
   activities: number[] | undefined;
   item: number;
 }
