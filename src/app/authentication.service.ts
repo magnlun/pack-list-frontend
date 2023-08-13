@@ -82,6 +82,7 @@ export class AuthenticationService {
   logout() {
     this.loginToken = undefined;
     this.loggedIn$.next(false);
+    this.deleteToken();
   }
 
   refreshToken(savedToken?: string): Observable<LoginToken> {
