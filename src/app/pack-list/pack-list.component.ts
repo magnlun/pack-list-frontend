@@ -1,13 +1,13 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { merge, Observable, Subscription } from 'rxjs';
-import { PackListService } from '../pack-list.service'
-import { ActivatedRoute, Router } from '@angular/router';
-import { map, mergeMap, startWith } from 'rxjs/operators';
-import { Item, PackItem, PackList } from "../models";
-import { FormControl } from "@angular/forms";
-import { Breakpoints } from "@angular/cdk/layout";
-import { LayoutService } from "../layout.service";
-import { ItemService } from "../item.service";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {merge, Observable, Subscription} from 'rxjs';
+import {PackListService} from '../pack-list.service'
+import {ActivatedRoute, Router} from '@angular/router';
+import {map, mergeMap, startWith} from 'rxjs/operators';
+import {Item, PackItem, PackList} from "../models";
+import {FormControl} from "@angular/forms";
+import {Breakpoints} from "@angular/cdk/layout";
+import {LayoutService} from "../layout.service";
+import {ItemService} from "../item.service";
 
 @Component({
   selector: 'app-pack-list',
@@ -31,7 +31,8 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   displayFn: any = (item: Item) => item.name;
 
-  constructor(private service: PackListService, private route: ActivatedRoute, private router: Router, private layoutService: LayoutService, private itemService: ItemService) { }
+  constructor(private service: PackListService, private route: ActivatedRoute, private router: Router, private layoutService: LayoutService, private itemService: ItemService) {
+  }
 
   ngOnInit(): void {
 
@@ -39,15 +40,13 @@ export class PackListComponent implements OnInit, OnDestroy {
       this.route.paramMap.pipe(
         mergeMap((params) => {
           const paramId = params.get('id');
-          if(paramId != null) {
+          if (paramId != null) {
             return this.service.getPackList(parseInt(paramId))
           }
           return new Observable<PackList>();
         })
       ).subscribe((list) => {
-        if(list) {
-          this.packList = list;
-        }
+        this.packList = list;
       })
     );
     this.subscriptions.add(
@@ -68,12 +67,12 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   private _filter(value: string): Item[] {
     return this.items.filter((option) => {
-      if(this.packList) {
+      if (this.packList) {
         return this.packList.items.findIndex((packedItem) => packedItem.item.id === option.id) < 0;
       }
       return true;
     }).filter(option => {
-      if(option.name.length < value.length) {
+      if (option.name.length < value.length) {
         return false;
       }
       const compare = option.name.substring(0, value.length);
@@ -86,31 +85,30 @@ export class PackListComponent implements OnInit, OnDestroy {
   }
 
   sortPacklist() {
-    if(this.packList) {
+    if (this.packList) {
       this.packList.items.sort((a, b) => a.item.name.localeCompare(b.item.name));
       const unpackedItems = this.packList.items.filter((item) => !item.checked)
       this.packedItems = this.packList.items.filter((item) => item.checked)
       this.categorizedItems = unpackedItems.reduce((map, item) => {
         let items = map.get(item.category);
-        if(items) {
+        if (items) {
           items.push(item)
-        }
-        else {
+        } else {
           map.set(item.category, [item])
         }
         return map;
       }, new Map<string | null, PackItem[]>());
       this.categoryList = [...new Set(this.packList.items.map((item) => item.category))]
         .sort((a, b) => {
-          if(a === null) {
-            return 1;
+            if (a === null) {
+              return 1;
+            }
+            if (b === null) {
+              return -1;
+            }
+            return a.localeCompare(b);
           }
-          if(b === null) {
-            return -1;
-          }
-          return a.localeCompare(b);
-        }
-      );
+        );
     }
   }
 
@@ -121,7 +119,7 @@ export class PackListComponent implements OnInit, OnDestroy {
   }
 
   deleteList() {
-    if(this.packList) {
+    if (this.packList) {
       this.subscriptions.add(
         this.service.deletePackList(this.packList.id).subscribe(() => this.router.navigate(['/']))
       );
@@ -129,8 +127,8 @@ export class PackListComponent implements OnInit, OnDestroy {
   }
 
   shareList() {
-    let shareUrl = window.location.origin + `/share/${this.packList?.shareId}`;
-    if(navigator.share) {
+    let shareUrl = window.location.origin + `/share/${ this.packList?.shareId }`;
+    if (navigator.share) {
       navigator.share({
         title: 'Packlista ' + this.packList?.name,
         text: 'En packlista för ' + this.packList?.name,
@@ -138,8 +136,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       })
         .then(() => console.log('Share complete'))
         .catch((error) => console.error('Could not share at this time', error))
-    }
-    else {
+    } else {
       navigator.clipboard.writeText(shareUrl);
     }
   }
@@ -158,7 +155,7 @@ export class PackListComponent implements OnInit, OnDestroy {
   }
 
   addItem(item: Item) {
-    if(this.packList) {
+    if (this.packList) {
       this.subscriptions.add(
         this.service.addItemToList(this.packList, item).subscribe((packList) => {
           this.myControl.setValue('');
@@ -179,7 +176,7 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   unselectAll() {
     let packList = this.packList;
-    if(packList) {
+    if (packList) {
       this.subscriptions.add(
         merge(
           packList.items
@@ -195,7 +192,7 @@ export class PackListComponent implements OnInit, OnDestroy {
   }
 
   cloneList() {
-    if(this.packList) {
+    if (this.packList) {
       const createRequest = {
         name: 'Kopia av ' + this.packList.name,
         items: this.packList.items.map((packItem) => {
@@ -220,12 +217,11 @@ export class PackListComponent implements OnInit, OnDestroy {
 
   selectOrCreateItem() {
     let itemName = this.myControl.value;
-    if(itemName) {
+    if (itemName) {
       let item = this.items.find((item) => item.name === itemName);
-      if(item) {
+      if (item) {
         this.addItem(item);
-      }
-      else {
+      } else {
         this.subscriptions.add(
           this.itemService.createItem(itemName).subscribe((item) => {
             this.addItem(item)

@@ -63,14 +63,14 @@ export class NewTemplateItemComponent implements OnDestroy {
   }
 
   get itemDescription(): string {
-    const stringPersons = this.selectedItems.map((person) => person.name.toLowerCase());
-    if(!stringPersons.length) {
+    const stringItems = this.selectedItems.map((item) => item.name.toLowerCase());
+    if(!stringItems.length) {
       return 'inget';
     }
-    if(stringPersons.length === 1) {
-      return stringPersons[0];
+    if(stringItems.length === 1) {
+      return stringItems[0];
     }
-    return stringPersons.slice(0, stringPersons.length - 1).join(', ') + " och " + stringPersons[stringPersons.length - 1];
+    return stringItems.slice(0, stringItems.length - 1).join(', ') + " och " + stringItems[stringItems.length - 1];
   }
 
   get durationDescription(): string {

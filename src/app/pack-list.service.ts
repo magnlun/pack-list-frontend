@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
-import { SecureHttp } from './http-client.service';
-import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
-import { Item, PackItem, PackList, Template, TemplateItem } from "./models";
-import { TemplateService } from "./template.service";
-import { ItemService } from "./item.service";
+import {Injectable} from '@angular/core';
+import {combineLatest, Observable, of, ReplaySubject} from 'rxjs';
+import {SecureHttp} from './http-client.service';
+import {catchError, first, map, mergeMap, tap} from "rxjs/operators";
+import {Item, PackItem, PackList, Template, TemplateItem} from "./models";
+import {TemplateService} from "./template.service";
+import {ItemService} from "./item.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,24 +13,22 @@ export class PackListService {
 
   $packLists = new ReplaySubject<PackList[]>(1);
 
-  constructor(private http: SecureHttp, private templateService: TemplateService, private itemService: ItemService) { }
+  constructor(private http: SecureHttp, private templateService: TemplateService, private itemService: ItemService) {
+  }
 
-  getPackList(id: number): Observable<PackList | undefined> {
+  getPackList(id: number): Observable<PackList> {
     let $persons = this.templateService.$persons
       .pipe(
-        map((persons) => persons.reduce((map, person) => {
-          map.set(person.id, person);
-          return map;
-        }, new Map<number, Template>()))
+        map((persons) => new Map<number, Template>(persons.map((person) => [person.id, person])))
       );
     return this.$packLists.pipe(
       first(),
-      map((items) => items.find((item) => item.id === id)),
+      map((lists) => lists.find((list) => list.id === id)),
       mergeMap((list) => {
-        if(list) {
+        if (list) {
           return of(list);
         }
-        let getResponse = this.http.get<PackListResponse>(`/rest/pack-lists/${id}/`);
+        let getResponse = this.http.get<PackListResponse>(`/rest/pack-lists/${ id }/`);
         return combineLatest([getResponse, this.itemService.$itemsById, $persons]).pipe(
           first(),
           map(([list, itemMap, persons]) => this.mapPackListResponse(list, itemMap, persons))
@@ -40,7 +38,7 @@ export class PackListService {
   }
 
   deletePackList(id: number): Observable<any> {
-    let $delete = this.http.delete<PackList>(`/rest/pack-lists/${id}/`);
+    let $delete = this.http.delete<PackList>(`/rest/pack-lists/${ id }/`);
     return combineLatest([this.$packLists, $delete]).pipe(
       first(),
       tap(([lists]) => {
@@ -49,8 +47,9 @@ export class PackListService {
       })
     )
   }
+
   saveItemState(item: PackItem): Observable<PackItemResponse> {
-    return this.http.put<PackItemResponse>(`/rest/pack-items/${item.id}/`,
+    return this.http.put<PackItemResponse>(`/rest/pack-items/${ item.id }/`,
       {
         id: item.id,
         checked: item.checked,
@@ -152,20 +151,20 @@ export class PackListService {
   }
 
   deletePackItem(item: PackItem): Observable<any> {
-    return this.http.delete(`/rest/pack-items/${item.id}`)
+    return this.http.delete(`/rest/pack-items/${ item.id }`)
   }
 
   updatePackItem(item: PackItem): Observable<any> {
     const request: any = Object.assign({}, item);
     request.person = item.person?.id;
     request.item = item.item.id
-    return this.http.patch(`/rest/pack-items/${item.id}/`, request)
+    return this.http.patch(`/rest/pack-items/${ item.id }/`, request)
   }
 
   addPacklist(shareId: string): Observable<PackList> {
-    const $response = this.http.patch<PackListResponse>(`/rest/add-to-list/${shareId}/`, {}).pipe(
+    const $response = this.http.patch<PackListResponse>(`/rest/add-to-list/${ shareId }/`, {}).pipe(
       catchError((error) => {
-        if(error.status === 409) {
+        if (error.status === 409) {
           return of(error.error);
         }
         throw error;
@@ -190,7 +189,7 @@ export class PackListService {
   }
 
   updatePackList(packList: PackList) {
-    const $response = this.http.patch<PackListResponse>(`/rest/pack-lists/${packList.id}/`, {
+    const $response = this.http.patch<PackListResponse>(`/rest/pack-lists/${ packList.id }/`, {
       id: packList.id,
       name: packList.name
     });

@@ -59,11 +59,9 @@ export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy
   updateCheckStatus(newSelected: Item) {
     let index = this.selectedItems.indexOf(newSelected);
     if (index >= 0) {
-      this.selectedItems.splice(index, 1);
       this.updateSelectStatus.emit([newSelected, false]);
     }
     else {
-      this.selectedItems.push(newSelected);
       this.updateSelectStatus.emit([newSelected, true]);
     }
     this.sortItemList();
