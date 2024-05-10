@@ -1,9 +1,11 @@
-<div *ngIf="packList" class="container" [class.mobile]="isSmallScreen">
+<div *ngIf="packList" class="container" [class.mobile]="isSmallScreen" [class.desktop]="!isSmallScreen">
   <div class="header">
-    <h2 class="fs-2 name" (click)="startEdit()" [class.d-none]="editTeamName">{{packList.name}}</h2>
-    <app-text-input [label]="'Namn'" [model]="packList.name" (model)="packList.name = $event"
-                    (focusLost)="saveName()" (enterPressed)="saveName()"
-                    [class.d-none]="!editTeamName" [focus]="editTeamName"></app-text-input>
+    <div [class]="'pack-list-name'">
+      <h2 class="fs-2 name" (click)="startEdit()" [class.d-none]="editTeamName">{{packList.name}}</h2>
+      <app-text-input [label]="'Namn'" [model]="packList.name" (model)="packList.name = $event"
+                      (focusLost)="saveName()" (enterPressed)="saveName()"
+                      [class.d-none]="!editTeamName" [focus]="editTeamName"></app-text-input>
+    </div>
     <div class="buttons">
       <button mat-icon-button matTooltip="Kopiera listan" (click)="cloneList()">
         <mat-icon>content_copy</mat-icon>
@@ -20,8 +22,11 @@
     </div>
   </div>
   <div class="content">
-    <app-item-category *ngFor="let category of categoryList" [name]="category" [items]="categorizedItems.get(category) || []" (deleteEvent)="deleteItem($event)" (updateEvent)="updatePacklist($event)">
-    </app-item-category>
+    <div class="categories">
+      <app-item-category *ngFor="let category of categoryList" [name]="category" [items]="categorizedItems.get(category) || []" (deleteEvent)="deleteItem($event)" (updateEvent)="updatePacklist($event)">
+      </app-item-category>
+      <div></div>
+    </div>
     <div class="new-item">
       <app-checkbox [disabled]="true"></app-checkbox>
 

@@ -1,5 +1,18 @@
 .mobile {
   width: 100%;
+  .header {
+    flex-direction: column;
+  }
+}
+.desktop {
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    * {
+      flex-basis: 34%;
+      flex-grow: 1;
+    }
+  }
 }
 .container {
   display: flex;
@@ -30,11 +43,11 @@
   }
   .new-item {
     display: flex;
-
-    .new-item-input {
-      outline: none;
-      border: 0;
-      border-bottom: 1px black solid;
+    form {
+      width: 100%;
+      mat-form-field {
+        width: 100%;
+      }
     }
   }
 }
