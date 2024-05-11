@@ -8,7 +8,7 @@
            [formControl]="myControl"
            [matAutocomplete]="auto"
            (keydown.enter)="selectOrCreateItem()">
-    <button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+    <button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clearInput()">
       <mat-icon>close</mat-icon>
     </button>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addItem($event.option.value)">

@@ -59,9 +59,10 @@ export class ItemSearchComponent implements OnInit, OnChanges {
   }
 
   selectOrCreateItem() {
-    let itemName = this.myControl.value;
-    if (itemName) {
-      let item = this.items.find((item) => item.name === itemName);
+    let value = this.myControl.value;
+    if (value) {
+      const itemName = value;
+      let item = this.items.find((item) => item.name.localeCompare(itemName, undefined, { sensitivity: 'base' }) === 0);
       if (item) {
         this.addItem(item);
       } else {
