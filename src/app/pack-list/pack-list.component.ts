@@ -155,6 +155,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.service.addItemToList(this.packList, item).subscribe((packList) => {
           this.packList = packList;
+          this.unselectedItems = this.findUnselectedItems();
         })
       );
     }
@@ -165,6 +166,7 @@ export class PackListComponent implements OnInit, OnDestroy {
       this.service.deletePackItem(deletedEvent).subscribe(() => {
         this.packList!.items.splice(this.packList!.items.findIndex((item) => item.id === deletedEvent.id), 1)
         this.sortPacklist();
+        this.unselectedItems = this.findUnselectedItems();
       })
     );
   }
