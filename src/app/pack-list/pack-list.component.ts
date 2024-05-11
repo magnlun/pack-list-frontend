@@ -23,13 +23,9 @@ export class PackListComponent implements OnInit, OnDestroy {
   editTeamName: boolean = false;
   private subscriptions = new Subscription();
   items: Item[] = [];
-
-  myControl = new FormControl('');
-  filteredOptions!: Observable<Item[]>;
+  unselectedItems: Item[] = [];
 
   isSmallScreen = false;
-
-  displayFn: any = (item: Item) => item.name;
 
   constructor(private service: PackListService, private route: ActivatedRoute, private router: Router, private layoutService: LayoutService, private itemService: ItemService) {
   }
@@ -47,6 +43,7 @@ export class PackListComponent implements OnInit, OnDestroy {
         })
       ).subscribe((list) => {
         this.packList = list;
+        this.unselectedItems = this.findUnselectedItems();
       })
     );
     this.subscriptions.add(
@@ -55,33 +52,32 @@ export class PackListComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
     this.subscriptions.add(
-      this.itemService.$items.subscribe((items) => this.items = items)
+      this.itemService.$items.subscribe((items) => {
+        this.items = items;
+        this.unselectedItems = this.findUnselectedItems();
+      })
     )
-  }
-
-
-  private _filter(value: string): Item[] {
-    return this.items.filter((option) => {
-      if (this.packList) {
-        return this.packList.items.findIndex((packedItem) => packedItem.item.id === option.id) < 0;
-      }
-      return true;
-    }).filter(option => {
-      if (option.name.length < value.length) {
-        return false;
-      }
-      const compare = option.name.substring(0, value.length);
-      return compare.localeCompare(value, undefined, { sensitivity: 'base' }) === 0
-    });
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  private findUnselectedItems(): Item[] {
+    if (this.items) {
+      let packList = this.packList;
+      if (packList) {
+        const packedItems = packList.items;
+        return this.items.filter((option) => {
+          return packedItems.findIndex((packedItem) => packedItem.item.id === option.id) < 0;
+        })
+      }
+      else {
+        return this.items;
+      }
+    }
+    return [];
   }
 
   sortPacklist() {
@@ -158,7 +154,6 @@ export class PackListComponent implements OnInit, OnDestroy {
     if (this.packList) {
       this.subscriptions.add(
         this.service.addItemToList(this.packList, item).subscribe((packList) => {
-          this.myControl.setValue('');
           this.packList = packList;
         })
       );
@@ -215,19 +210,11 @@ export class PackListComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectOrCreateItem() {
-    let itemName = this.myControl.value;
-    if (itemName) {
-      let item = this.items.find((item) => item.name === itemName);
-      if (item) {
-        this.addItem(item);
-      } else {
-        this.subscriptions.add(
-          this.itemService.createItem(itemName).subscribe((item) => {
-            this.addItem(item)
-          })
-        );
-      }
-    }
+  createItem(itemName: string) {
+    this.subscriptions.add(
+      this.itemService.createItem(itemName).subscribe((item) => {
+        this.addItem(item)
+      })
+    );
   }
 }

@@ -29,25 +29,7 @@
     </div>
     <div class="new-item">
       <app-checkbox [disabled]="true"></app-checkbox>
-
-      <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Ny sak att packa</mat-label>
-          <input type="text"
-                 placeholder="Sök"
-                 aria-label="Ny sak att packa"
-                 matInput
-                 [formControl]="myControl"
-                 [matAutocomplete]="auto"
-          (keydown.enter)="selectOrCreateItem()">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addItem($event.option.value)">
-            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
-
+      <app-item-search [items]="unselectedItems" [label]="'Ny sak att packa'" (itemCreated)="createItem($event)" (itemSelected)="addItem($event)"></app-item-search>
     </div>
     <mat-expansion-panel [disabled]="!packedItems.length" [expanded]="!!packedItems.length">
       <mat-expansion-panel-header>

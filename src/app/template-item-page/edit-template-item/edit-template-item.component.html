@@ -1,7 +1,8 @@
 <mat-card>
   <mat-card-content>
+    <app-item-search [items]="items" [label]="'Hitta mall med sak'" (itemSelected)="searchForItem($event)" (clearedInput)="showAllTemplates()" [clearAfterSelect]="false"></app-item-search>
     <mat-action-list>
-      <button mat-list-item *ngFor="let key of templateKeys" (click)="selectTemplateGroup(key)">{{key.description}}</button>
+      <button mat-list-item *ngFor="let key of templateKeys" (click)="selectTemplateGroup(key)" [class.selected]="key.description === selectedTemplateGroup?.description">{{key.description}}</button>
     </mat-action-list>
   </mat-card-content>
 </mat-card>

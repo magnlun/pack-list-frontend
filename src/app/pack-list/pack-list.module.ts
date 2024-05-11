@@ -12,6 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { EditItemModule } from "./edit-item/edit-item.module";
+import {ItemSearchModule} from "../components/item-search/item-search.module";
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { EditItemModule } from "./edit-item/edit-item.module";
         MatButtonModule,
         MatIconModule,
         MatExpansionModule,
-      EditItemModule
+        EditItemModule,
+        ItemSearchModule
     ]
 })
 export class PackListModule { }

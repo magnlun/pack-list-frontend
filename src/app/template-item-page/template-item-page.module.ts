@@ -12,6 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NewTemplateItemComponent } from './new-template-item/new-template-item.component';
 import { EditTemplateItemComponent } from './edit-template-item/edit-template-item.component';
+import {ItemSearchModule} from "../components/item-search/item-search.module";
 
 
 
@@ -31,7 +32,8 @@ import { EditTemplateItemComponent } from './edit-template-item/edit-template-it
         FormsModule,
         MatCardModule,
         MatButtonModule,
-        MatTabsModule
+        MatTabsModule,
+        ItemSearchModule
     ]
 })
 export class TemplateItemPageModule { }

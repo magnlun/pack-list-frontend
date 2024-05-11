@@ -1,3 +1,8 @@
+:host {
+  display: flex;
+  justify-content: center;
+}
+
 .mobile {
   width: 100%;
   .header {
@@ -43,11 +48,8 @@
   }
   .new-item {
     display: flex;
-    form {
-      width: 100%;
-      mat-form-field {
-        width: 100%;
-      }
+    app-item-search {
+      flex-grow: 1;
     }
   }
 }

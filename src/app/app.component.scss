@@ -1,2 +1,13 @@
 @use "variables";
 
+@media (min-width: variables.$large-bottom) {
+  main {
+    display: flex;
+    justify-content: center;
+    .container {
+      max-width: 80%;
+      flex-grow: 1;
+    }
+  }
+}
+

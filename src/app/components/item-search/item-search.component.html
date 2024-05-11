@@ -1,0 +1,20 @@
+<form class="example-form">
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>{{ label }}</mat-label>
+    <input type="text"
+           placeholder="Sök"
+           [attr.aria-label]="label"
+           matInput
+           [formControl]="myControl"
+           [matAutocomplete]="auto"
+           (keydown.enter)="selectOrCreateItem()">
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="addItem($event.option.value)">
+      <mat-option *ngFor="let option of filteredOptions" [value]="option">
+        {{option.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>

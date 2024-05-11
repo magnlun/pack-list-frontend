@@ -25,7 +25,7 @@ export class FilterableItemListComponent implements OnInit, OnChanges, OnDestroy
   private subscriptions = new Subscription();
 
 
-  constructor(private templateService: TemplateService, private packListService: PackListService, private itemService: ItemService) {
+  constructor(private itemService: ItemService) {
   }
 
   ngOnInit(): void {

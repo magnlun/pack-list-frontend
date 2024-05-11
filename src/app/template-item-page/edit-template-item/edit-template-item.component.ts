@@ -20,16 +20,18 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
   templateItems: TemplateItem[] = [];
 
   selectedTemplateGroup: TemplateGrouping | undefined;
-
   templateKeys: TemplateGrouping[] = [];
-
   subscriptions = new Subscription();
 
   constructor(private templateService: TemplateService) {
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    const templateItemMap = this.templateItems
+  ngOnChanges() {
+    this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(this.templateItems);
+  }
+
+  private static findTemplateGroupings(templateItems:TemplateItem[]) {
+    const templateItemMap = templateItems
       .reduce((map, key) => {
         let templateKey = getTemplateKey(key);
         let existingKey = map.get(templateKey);
@@ -41,7 +43,7 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
         }
         return map;
       }, new Map<string, TemplateGrouping>());
-    this.templateKeys = [...templateItemMap.values()] as TemplateGrouping[];
+    return [...templateItemMap.values()] as TemplateGrouping[];
   }
 
   selectTemplateGroup(key: TemplateGrouping) {
@@ -69,6 +71,15 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  searchForItem($event: Item) {
+    const filteredItems = this.templateItems.filter((templateItem) => templateItem.item.id === $event.id)
+    this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(filteredItems);
+  }
+
+  showAllTemplates() {
+    this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(this.templateItems);
   }
 }
 
