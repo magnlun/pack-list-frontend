@@ -37,7 +37,6 @@ export class TemplateService {
     return combineLatest([response, this.$persons, this.$durations, this.$destinations, this.$activities, this.itemService.$itemsById]).pipe(
       first(),
       map(([response, allPersons, allDurations, allDestionations, allActivities, itemsById]) => {
-        console.log("Mapping");
         const personMap = allPersons.reduce((map, template) => {
           map.set(template.id, template)
           return map;

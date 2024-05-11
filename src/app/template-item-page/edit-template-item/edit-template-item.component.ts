@@ -30,7 +30,7 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
     this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(this.templateItems);
   }
 
-  private static findTemplateGroupings(templateItems:TemplateItem[]) {
+  private static findTemplateGroupings(templateItems: TemplateItem[]) {
     const templateItemMap = templateItems
       .reduce((map, key) => {
         let templateKey = getTemplateKey(key);
@@ -74,8 +74,8 @@ export class EditTemplateItemComponent implements OnChanges, OnDestroy {
   }
 
   searchForItem($event: Item) {
-    const filteredItems = this.templateItems.filter((templateItem) => templateItem.item.id === $event.id)
-    this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(filteredItems);
+    this.templateKeys = EditTemplateItemComponent.findTemplateGroupings(this.templateItems)
+      .filter((key) => key.items.findIndex((item) => item.id === $event.id) >= 0);
   }
 
   showAllTemplates() {

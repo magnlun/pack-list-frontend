@@ -37,7 +37,12 @@ export class ItemSearchComponent implements OnInit, OnChanges {
   clearedInput = new EventEmitter();
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
 
-  displayFn: any = (item: Item) => item.name;
+  displayFn: any = (item: Item) => {
+    if (!item) {
+      return '';
+    }
+    return item.name;
+  }
 
   ngOnInit(): void {
     this.filteredOptions = this.filter('');
@@ -79,6 +84,7 @@ export class ItemSearchComponent implements OnInit, OnChanges {
   selectOrCreateItem() {
     let item = this.items.find((item) => item.name.localeCompare(this.filterText, undefined, { sensitivity: 'base' }) === 0);
     if (item) {
+      this._filterText = item.name;
       this.addItem(item);
       this.autocompleteTrigger.closePanel();
     } else {
