@@ -1,7 +1,16 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormControl} from "@angular/forms";
-import {startWith} from "rxjs/operators";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {Item} from "../../models";
+import {MatAutocompleteTrigger} from "@angular/material/autocomplete";
 
 @Component({
   selector: 'app-item-search',
@@ -10,7 +19,7 @@ import {Item} from "../../models";
 })
 export class ItemSearchComponent implements OnInit, OnChanges {
 
-  myControl = new FormControl('');
+  _filterText = '';
   filteredOptions: Item[] = [];
 
   @Input()
@@ -26,18 +35,27 @@ export class ItemSearchComponent implements OnInit, OnChanges {
   itemCreated = new EventEmitter<string>();
   @Output()
   clearedInput = new EventEmitter();
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
 
   displayFn: any = (item: Item) => item.name;
+
   ngOnInit(): void {
-    this.myControl.valueChanges.pipe(
-      startWith(''),
-    ).subscribe((value) => {
-      this.filteredOptions = this.filter(value || '')
-    })
+    this.filteredOptions = this.filter('');
+  }
+
+  set filterText(text: string) {
+    if (text !== this._filterText) {
+      this._filterText = text;
+      this.filteredOptions = this.filter(text);
+    }
+  }
+
+  get filterText(): string {
+    return this._filterText;
   }
 
   ngOnChanges(): void {
-    this.filteredOptions = this.filter(this.myControl.value || '');
+    this.filteredOptions = this.filter(this.filterText);
   }
 
 
@@ -54,28 +72,25 @@ export class ItemSearchComponent implements OnInit, OnChanges {
   addItem(value: Item) {
     this.itemSelected.emit(value);
     if (this.clearAfterSelect) {
-      this.myControl.setValue('');
+      this.filterText = '';
     }
   }
 
   selectOrCreateItem() {
-    let value = this.myControl.value;
-    if (value) {
-      const itemName = value;
-      let item = this.items.find((item) => item.name.localeCompare(itemName, undefined, { sensitivity: 'base' }) === 0);
-      if (item) {
-        this.addItem(item);
-      } else {
-        this.itemCreated.emit(itemName);
-        if (this.clearAfterSelect) {
-          this.myControl.setValue('');
-        }
+    let item = this.items.find((item) => item.name.localeCompare(this.filterText, undefined, { sensitivity: 'base' }) === 0);
+    if (item) {
+      this.addItem(item);
+      this.autocompleteTrigger.closePanel();
+    } else {
+      this.itemCreated.emit(this.filterText);
+      if (this.clearAfterSelect) {
+        this.filterText = '';
       }
     }
   }
 
   clearInput() {
-    this.myControl.setValue('');
+    this.filterText = '';
     this.clearedInput.emit();
   }
 }
